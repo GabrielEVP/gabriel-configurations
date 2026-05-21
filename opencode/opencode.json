@@ -1,13 +1,81 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "ollama": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "LLMStudio (local)",
+      "options": {
+        "baseURL": "http://127.0.0.1:1234/v1"
+      },
+      "models": {
+        "google/gemma-4-e4b": {
+          "name": "gemma-4-e4b"
+        }
+      }
+    }
+  },
   "mcp": {
-    "engram": {
-      "command": [
-        "/home/linuxbrew/.linuxbrew/Cellar/engram/1.12.0/bin/engram",
-        "mcp",
-        "--tools=agent"
-      ],
+    "clickup": {
+      "command": ["npx", "-y", "mcp-remote", "https://mcp.clickup.com/mcp"],
       "enabled": true,
+      "type": "local"
+    },
+    "context7": {
+      "enabled": true,
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp"
+    },
+    "docker": {
+      "command": ["docker", "mcp", "gateway", "run", "--transport=stdio"],
+      "enabled": true,
+      "type": "local"
+    },
+    "engram": {
+      "command": ["engram", "mcp", "--tools=agent"],
+      "type": "local"
+    },
+    "figma": {
+      "command": ["npx", "-y", "figma-developer-mcp"],
+      "enabled": true,
+      "environment": {
+        "FIGMA_ACCESS_TOKEN": "figd_GThQnwzsssiRQ2GXxw4z1y2bbnZR03il-lvQ-JcT"
+      },
+      "type": "local"
+    },
+    "gh_grep": {
+      "enabled": true,
+      "type": "remote",
+      "url": "https://mcp.grep.app"
+    },
+    "github": {
+      "command": ["/opt/homebrew/bin/github-mcp-server", "stdio"],
+      "enabled": true,
+      "environment": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "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"
+      },
+      "type": "local"
+    },
+    "gitlab": {
+      "command": ["npx", "-y", "@structured-world/gitlab-mcp"],
+      "enabled": true,
+      "environment": {
+        "GITLAB_API_URL": "https://gitlab.com",
+        "GITLAB_TOKEN": "glft-quHGK76ZSsKqxDHtgsyP"
+      },
+      "type": "local"
+    },
+    "notion": {
+      "command": ["npx", "-y", "@notionhq/notion-mcp-server"],
+      "enabled": true,
+      "environment": {
+        "OPENAPI_MCP_HEADERS": "{\"Authorization\": \"Bearer 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\", \"Notion-Version\": \"2022-06-28\"}"
+      },
+      "type": "local"
+    },
+    "playwright": {
+      "command": ["npx", "-y", "@playwright/mcp@latest"],
+      "enabled": true,
+      "environment": {},
       "type": "local"
     }
   }
