@@ -84,6 +84,11 @@ if [ "$OS" != "macos" ] && [ -n "$BREW_PREFIX" ]; then
   fi
 fi
 
+info "Installing zed configuration..."
+backup_existing "$CONFIG_DIR/zed"
+mkdir -p "$CONFIG_DIR/zed"
+rsync -a "$CLONE_DIR/zed/" "$CONFIG_DIR/zed/"
+
 info "Installing zsh configuration..."
 backup_existing "$HOME/.zshrc"
 backup_existing "$HOME/.zprofile"

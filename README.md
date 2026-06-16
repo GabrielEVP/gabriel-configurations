@@ -1,24 +1,26 @@
 # gabriel-configurations
 
-Personal dotfiles for ghostty, neovim, and opencode.
+Personal dotfiles for ghostty, neovim, opencode, zed, and zsh.
 
 ## Contents
 
 ```
 gabriel-configurations/
 ├── ghostty/
-│   ├── config          # Terminal configuration (font, colors, keybindings, shader)
-│   └── shaders/        # GLSL shaders collection (cursor effects, backgrounds, etc.)
+│   ├── config          # Terminal configuration (font, colors, keybindings)
+│   └── themes/         # Ghostty theme presets
 ├── nvim/               # Neovim config based on LazyVim + custom plugins
 ├── opencode/
-│   ├── config.json     # MCP servers configuration (tokens required — see below)
-│   ├── opencode.json   # Engram MCP configuration
+│   ├── config.json     # MCP servers configuration (tokens required)
+│   ├── opencode.json   # Main opencode configuration
 │   ├── tui.json        # TUI theme selection
-│   ├── agents/         # Custom AI agents (gabriel, gabriel-backend, gabriel-frontend, etc.)
-│   ├── themes/         # Custom themes (gabriel-theme, gentleman)
-│   ├── plugins/        # Engram plugin
-│   └── skills/         # Skill files for specialized workflows
-└── install.sh          # Automated installation script
+│   ├── agents/         # Custom AI agents
+│   ├── themes/         # OpenCode themes
+│   ├── plugins/        # OpenCode plugins
+│   └── skills/         # Skill files for SDD workflows
+├── zed/                # Zed editor config (keymaps, settings, themes, tasks)
+├── zsh/                # Zsh config (.zshrc, .zprofile, .zshenv)
+└── install.sh          # Cross-platform automated installation (macOS + Linux)
 ```
 
 ## Quick Install
@@ -36,53 +38,37 @@ chmod +x install.sh
 ./install.sh
 ```
 
-> **Note:** Any existing `~/.config/ghostty`, `~/.config/nvim`, or `~/.config/opencode` directories will be backed up automatically before installation.
+> **Note:** Existing config directories are backed up automatically before installation.
 
 ## Post-Install: Add Your Tokens
 
-After installation, edit `~/.config/opencode/config.json` and replace the placeholders:
+After installation, edit `~/.config/opencode/opencode.json` and add your API tokens:
 
-| Placeholder | Description |
+| Token | Description |
 |---|---|
-| `YOUR_GITHUB_TOKEN` | GitHub Personal Access Token |
-| `YOUR_GITLAB_TOKEN` | GitLab Personal Access Token |
-| `YOUR_FIGMA_API_KEY` | Figma API Key |
-| `YOUR_NOTION_TOKEN` | Notion Integration Token |
-
-Also verify the `github-mcp-server` binary path matches your system:
-
-```json
-"command": ["/home/linuxbrew/.linuxbrew/bin/github-mcp-server", "stdio"]
-```
+| `GITHUB_PERSONAL_ACCESS_TOKEN` | GitHub Personal Access Token |
+| `GITLAB_TOKEN` | GitLab Personal Access Token |
+| `FIGMA_ACCESS_TOKEN` | Figma API Key |
+| `NOTION_TOKEN` | Notion Integration Token |
 
 ## Requirements
 
 - **ghostty** — [ghostty.org](https://ghostty.org)
 - **neovim** >= 0.10
 - **opencode** — [opencode.ai](https://opencode.ai)
+- **zed** — [zed.dev](https://zed.dev)
 - **IosevkaTerm NF** font — [nerdfonts.com](https://www.nerdfonts.com/font-downloads)
 - `git`, `rsync` (for the install script)
 
-## Themes
-
-### gabriel-theme
-Transparent background with Kanagawa-inspired palette. Best with a dark wallpaper.
-
-### gentleman
-Dark navy background (`#06080f`) with a refined color palette. Standalone, no wallpaper needed.
-
-Both themes use black (`#000000`) for input fields and expandable code blocks.
-
 ## Neovim
 
-Based on [LazyVim](https://www.lazyvim.org/) with additional plugins:
-- `avante.nvim` — AI assistant
-- `copilot.nvim` + `copilot-chat.nvim` — GitHub Copilot integration
+Based on [LazyVim](https://www.lazyvim.org/) with:
 - `blink.cmp` — completion engine
 - `fzf-lua` — fuzzy finder
 - `oil.nvim` — file manager
-- `obsidian.nvim` — Obsidian vault integration
 - `nvim-dap` — debugger
+- `trouble.nvim` — diagnostics list
+- `neotest` — test runner
 - And more in `lua/plugins/`
 
 ## License

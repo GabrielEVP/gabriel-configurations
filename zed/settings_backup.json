@@ -1,0 +1,73 @@
+{
+  "agent_servers": {
+    "your_agent": {
+      "type": "custom",
+      "command": "path_to_executable",
+      "args": [],
+      "env": {}
+    }
+  },
+  "context_servers": {
+    "mcp-server-github": {
+      "enabled": true,
+      "settings": {
+        "github_personal_access_token": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAIKMPNc7wh0BhcZ+5DrBC+4SfUo/2WgX5do+ILwLu1B gabrielenriquevargas2001@gmail.com"
+      }
+    }
+  },
+  "edit_predictions": {
+    "mode": "eager"
+  },
+  "icon_theme": "Ton Dark Theme",
+  "toolbar": {
+    "quick_actions": false
+  },
+  "show_edit_predictions": true,
+  "features": {
+    "edit_prediction_provider": "copilot"
+  },
+  "terminal": {
+    "dock": "bottom",
+    "shell": "system",
+    "env": {
+      "ZED_TERMINAL": "1"
+    },
+    "line_height": { "custom": 1.25 }
+  },
+  "project_panel": {
+    "dock": "left",
+    "indent_size": 12
+  },
+  "agent": {
+    "always_allow_tool_actions": true,
+    "dock": "right",
+    "inline_assistant_model": {
+      "provider": "copilot_chat",
+      "model": "claude-4-sonnet"
+    },
+    "model_parameters": [],
+    "default_model": {
+      "provider": "copilot_chat",
+      "model": "claude-sonnet-4"
+    }
+  },
+  "vim_mode": true,
+  "vim": {
+    "toggle_relative_line_numbers": true
+  },
+  "ui_font_size": 16,
+  "buffer_font_size": 16,
+  "agent_ui_font_size": 16,
+  "ui_font_family": "IosevkaTerm Nerd Font",
+  "buffer_font_family": "IosevkaTerm Nerd Font",
+  "theme": {
+    "mode": "dark",
+    "light": "Kanagawa Lotus",
+    "dark": "Atom"
+  },
+  "diagnostics": {
+    "inline": {
+      "enabled": true
+    }
+  }
+}
