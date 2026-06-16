@@ -3,7 +3,7 @@ name: skill-registry
 description: "Create or update the project skill registry. Trigger: update skills, skill registry, actualizar skills, or after skill changes."
 license: MIT
 metadata:
-  author: gentleman-programming
+  author: opencode
   version: "1.0"
 ---
 

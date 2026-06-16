@@ -71,12 +71,6 @@ return {
       },
     },
     {
-      "Alan-TheGentleman/oldworld.nvim",
-      lazy = false,
-      priority = 1000,
-      opts = {},
-    },
-    {
       "rebelot/kanagawa.nvim",
       priority = 1000,
       lazy = true,
