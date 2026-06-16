@@ -1,6 +1,6 @@
 # gabriel-configurations
 
-Personal dotfiles for ghostty, neovim, opencode, zed, and zsh.
+Personal dotfiles for ghostty, neovim, opencode, zed, zsh, zellij, and tmux.
 
 ## Contents
 
@@ -17,8 +17,12 @@ gabriel-configurations/
 │   ├── agents/         # Custom AI agents
 │   ├── themes/         # OpenCode themes
 │   ├── plugins/        # OpenCode plugins
+│   ├── profiles/       # Execution profiles
+│   ├── prompts/        # Prompt templates
 │   └── skills/         # Skill files for SDD workflows
+├── tmux/               # Tmux config (.tmux.conf)
 ├── zed/                # Zed editor config (keymaps, settings, themes, tasks)
+├── zellij/             # Zellij config (config.kdl)
 ├── zsh/                # Zsh config (.zshrc, .zprofile, .zshenv)
 └── install.sh          # Cross-platform automated installation (macOS + Linux)
 ```
@@ -57,6 +61,8 @@ After installation, edit `~/.config/opencode/opencode.json` and add your API tok
 - **neovim** >= 0.10
 - **opencode** — [opencode.ai](https://opencode.ai)
 - **zed** — [zed.dev](https://zed.dev)
+- **zellij** — [zellij.dev](https://zellij.dev) (optional)
+- **tmux** — [github.com/tmux/tmux](https://github.com/tmux/tmux) (optional)
 - **IosevkaTerm NF** font — [nerdfonts.com](https://www.nerdfonts.com/font-downloads)
 - `git`, `rsync` (for the install script)
 

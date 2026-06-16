@@ -89,6 +89,26 @@ backup_existing "$CONFIG_DIR/zed"
 mkdir -p "$CONFIG_DIR/zed"
 rsync -a "$CLONE_DIR/zed/" "$CONFIG_DIR/zed/"
 
+info "Installing zellij configuration..."
+if command -v zellij &>/dev/null; then
+  backup_existing "$CONFIG_DIR/zellij"
+  mkdir -p "$CONFIG_DIR/zellij"
+  rsync -a "$CLONE_DIR/zellij/" "$CONFIG_DIR/zellij/"
+else
+  warn "zellij not found — skipping zellij config"
+fi
+
+info "Installing tmux configuration..."
+if command -v tmux &>/dev/null; then
+  backup_existing "$HOME/.tmux.conf"
+  backup_existing "$CONFIG_DIR/tmux"
+  cp "$CLONE_DIR/tmux/tmux.conf" "$HOME/.tmux.conf"
+  mkdir -p "$CONFIG_DIR/tmux"
+  cp "$CLONE_DIR/tmux/tmux.conf" "$CONFIG_DIR/tmux/"
+else
+  warn "tmux not found — skipping tmux config"
+fi
+
 info "Installing zsh configuration..."
 backup_existing "$HOME/.zshrc"
 backup_existing "$HOME/.zprofile"
