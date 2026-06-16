@@ -27,7 +27,7 @@ This is the foundation of the **Skill Resolver Protocol** (see `_shared/skill-re
 1. Glob for `*/SKILL.md` files across ALL known skill directories. Check every path below — scan ALL that exist, not just the first match:
 
    **User-level (global skills):**
-   - `~/.pi/agent/skills/` — Pi/Gentle AI user skills
+   - `~/.pi/agent/skills/` — Pi/OpenCode user skills
    - `~/.config/agents/skills/`, `~/.agents/skills/`, `~/.kimi/skills/` — generic Agent Skills / Kimi-compatible locations
    - `~/.config/opencode/skills/` — OpenCode
    - `~/.config/kilo/skills/` — Kilo Code
@@ -53,7 +53,7 @@ This is the foundation of the **Skill Resolver Protocol** (see `_shared/skill-re
    - `{project-root}/.qwen/skills/` — Qwen Code workspace skills
    - `{project-root}/.kiro/skills/` — Kiro workspace skills
    - `{project-root}/.openclaw/skills/` — OpenClaw workspace skills
-   - `{project-root}/.pi/skills/`, `{project-root}/.agent/skills/`, `{project-root}/.agents/skills/`, `{project-root}/.atl/skills/` — Gentle AI/Pi and generic workspace skills
+   - `{project-root}/.pi/skills/`, `{project-root}/.agent/skills/`, `{project-root}/.agents/skills/`, `{project-root}/.atl/skills/` — OpenCode/Pi and generic workspace skills
 
 2. **SKIP `sdd-*` and `_shared`** — those are SDD workflow skills, not coding/task skills
 3. Also **SKIP `skill-registry`** — that's this skill
