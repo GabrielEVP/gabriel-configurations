@@ -17,19 +17,5 @@ return {
       right_pad = 1,
       highlight = "render-markdownBullet",
     },
-    checkbox = {
-      enabled = true,
-      unchecked = {
-        icon = "󰄱     ",
-        highlight = "RenderMarkdownUnchecked",
-      },
-      checked = {
-        icon = "󰱒     ",
-        highlight = "RenderMarkdownChecked",
-      },
-      custom = {
-        todo = { raw = "[-]", rendered = "󰥔     ", highlight = "RenderMarkdownTodo" },
-      },
-    },
   },
 }

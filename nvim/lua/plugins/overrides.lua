@@ -1,6 +1,49 @@
 -- This file contains the configuration overrides for specific Neovim plugins.
 
 return {
+  -- Configure nvim-web-devicons to set folder icons to white
+  {
+    "nvim-tree/nvim-web-devicons",
+    opts = {
+      override_by_filename = {
+        [".gitignore"] = {
+          icon = "",
+          color = "#ffffff",
+          name = "Gitignore",
+        },
+      },
+      default_icon = {
+        icon = "",
+        color = "#ffffff",
+        name = "Default",
+      },
+    },
+    config = function(_, opts)
+      require("nvim-web-devicons").setup(opts)
+      -- Override folder icons to white
+      require("nvim-web-devicons").set_icon({
+        ["folder"] = {
+          icon = "",
+          color = "#ffffff",
+          cterm_color = "15",
+          name = "Folder",
+        },
+        ["folder_open"] = {
+          icon = "",
+          color = "#ffffff",
+          cterm_color = "15",
+          name = "FolderOpen",
+        },
+        [".git"] = {
+          icon = "",
+          color = "#ffffff",
+          cterm_color = "15",
+          name = "GitFolder",
+        },
+      })
+    end,
+  },
+
   -- Change configuration for trouble.nvim
   {
     -- Plugin: trouble.nvim

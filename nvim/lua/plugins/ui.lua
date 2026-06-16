@@ -80,20 +80,24 @@ return {
   -- Description: A blazing fast and easy to configure Neovim statusline plugin.
   {
     "nvim-lualine/lualine.nvim",
-    event = "VeryLazy", -- Load this plugin on the 'VeryLazy' event
-    requires = { "nvim-tree/nvim-web-devicons", opt = true }, -- Optional dependency for icons
+    event = "VeryLazy",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
     opts = {
       options = {
-        theme = "gentleman-kanagawa-blur", -- Set the theme for lualine
-        icons_enabled = true, -- Enable icons in the statusline
+        theme = "atom",
+        icons_enabled = true,
       },
       sections = {
         lualine_a = {
           {
-            "mode", -- Display the current mode
-            icon = "", -- Set the icon for the mode
+            "mode",
           },
         },
+        lualine_b = { "branch", "diff", "diagnostics" },
+        lualine_c = {},
+        lualine_x = { "encoding", "fileformat", "filetype" },
+        lualine_y = { "progress" },
+        lualine_z = { "location" },
       },
       extensions = {
         "quickfix",
@@ -101,7 +105,7 @@ return {
           filetypes = { "oil" },
           sections = {
             lualine_a = {
-              mode,
+              "mode",
             },
             lualine_b = {
               function()
@@ -115,39 +119,6 @@ return {
                 return path .. " %m"
               end,
             },
-          },
-        },
-        {
-          filetypes = { "codecompanion" },
-          sections = {
-            lualine_a = {
-              mode,
-            },
-            lualine_b = {
-              codecompanion_adapter_name,
-            },
-            lualine_c = {
-              codecompanion_current_model_name,
-            },
-            lualine_x = {},
-            lualine_y = {
-              "progress",
-            },
-            lualine_z = {
-              "location",
-            },
-          },
-          inactive_sections = {
-            lualine_a = {},
-            lualine_b = {
-              codecompanion_adapter_name,
-            },
-            lualine_c = {},
-            lualine_x = {},
-            lualine_y = {
-              "progress",
-            },
-            lualine_z = {},
           },
         },
       },
@@ -202,15 +173,6 @@ return {
   -- Description: A Neovim plugin for creating a customizable dashboard.
   {
     "folke/snacks.nvim",
-    keys = {
-      {
-        "<leader>fb",
-        function()
-          Snacks.picker.buffers()
-        end,
-        desc = "Find Buffers",
-      },
-    },
     opts = {
       notifier = {},
       image = {},
@@ -245,19 +207,17 @@ return {
         },
         preset = {
           header = [[
-                                                                     
-  ███╗   ██╗███████╗ ██████╗ ██╗   ██╗██╗███╗   ███╗               
-  ████╗  ██║██╔════╝██╔═══██╗██║   ██║██║████╗ ████║               
-  ██╔██╗ ██║█████╗  ██║   ██║██║   ██║██║██╔████╔██║               
-  ██║╚██╗██║██╔══╝  ██║   ██║╚██╗ ██╔╝██║██║╚██╔╝██║               
-  ██║ ╚████║███████╗╚██████╔╝ ╚████╔╝ ██║██║ ╚═╝ ██║               
-  ╚═╝  ╚═══╝╚══════╝ ╚═════╝   ╚═══╝  ╚═╝╚═╝     ╚═╝               
-                                                                     
+ ███╗   ██╗███████╗ ██████╗ ██╗   ██╗██╗███╗   ███╗
+ ████╗  ██║██╔════╝██╔═══██╗██║   ██║██║████╗ ████║
+ ██╔██╗ ██║█████╗  ██║   ██║██║   ██║██║██╔████╔██║
+ ██║╚██╗██║██╔══╝  ██║   ██║╚██╗ ██╔╝██║██║╚██╔╝██║
+ ██║ ╚████║███████╗╚██████╔╝ ╚████╔╝ ██║██║ ╚═╝ ██║
+ ╚═╝  ╚═══╝╚══════╝ ╚═════╝   ╚═══╝  ╚═╝╚═╝     ╚═╝
 ]],
           -- stylua: ignore
           ---@type snacks.dashboard.Item[]
           keys = {
-            { icon = " ", key = "ff", desc = "Find File", action = ":lua Snacks.dashboard.pick('files')" },
+            { icon = " ", key = "f", desc = "Find File", action = ":lua Snacks.dashboard.pick('files')" },
             { icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
             { icon = " ", key = "g", desc = "Find Text", action = ":lua Snacks.dashboard.pick('live_grep')" },
             { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },

@@ -1,7 +1,14 @@
--- This file contains the configuration for setting up the lazy.nvim plugin manager in Neovim.
+-- Enable snacks and noice
+vim.g.snacks_enabled = true
+vim.g.noice_enabled = true
 
 -- Node.js configuration - always use latest stable version
 vim.g.node_host_prog = vim.fn.exepath("node") or "/usr/local/bin/node"
+-- Ensure we're using a recent Node version for LSPs and plugins
+if vim.fn.executable("node") == 1 then
+  local node_version = vim.fn.system("node --version"):gsub("\n", "")
+  print("Using Node.js version: " .. node_version)
+end
 
 -- Spell-checking
 vim.opt.spell = true -- activa spell checker
@@ -50,9 +57,6 @@ require("lazy").setup({
     -- { import = "lazyvim.plugins.extras.editor.snacks_explorer" },
     { import = "lazyvim.plugins.extras.editor.snacks_picker" },
 
-    -- Debgugging plugins
-    { import = "lazyvim.plugins.extras.dap.core" },
-
     -- Formatting plugins
     { import = "lazyvim.plugins.extras.lang.typescript.biome" },
     { import = "lazyvim.plugins.extras.formatting.prettier" },
@@ -63,6 +67,13 @@ require("lazy").setup({
     -- Language support plugins
     { import = "lazyvim.plugins.extras.lang.json" },
     { import = "lazyvim.plugins.extras.lang.markdown" },
+    { import = "lazyvim.plugins.extras.lang.typescript" },
+    { import = "lazyvim.plugins.extras.lang.angular" },
+    { import = "lazyvim.plugins.extras.lang.java" },
+    { import = "lazyvim.plugins.extras.lang.astro" },
+    { import = "lazyvim.plugins.extras.lang.go" },
+    { import = "lazyvim.plugins.extras.lang.nix" },
+    { import = "lazyvim.plugins.extras.lang.toml" },
 
     -- Coding plugins
     { import = "lazyvim.plugins.extras.coding.mini-surround" },
@@ -71,9 +82,6 @@ require("lazy").setup({
 
     -- Utility plugins
     { import = "lazyvim.plugins.extras.util.mini-hipatterns" },
-
-    -- AI plugins
-    { import = "lazyvim.plugins.extras.ai.copilot" },
 
     -- Import/override with your plugins
     { import = "plugins" },
