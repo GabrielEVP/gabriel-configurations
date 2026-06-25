@@ -1,0 +1,73 @@
+[window]
+opacity = 0.80
+blur = true
+decorations = "None"
+padding = { x = 8, y = 8 }
+dynamic_padding = true
+dimensions = { columns = 0, lines = 0 }
+startup_mode = "Maximized"
+
+[font]
+size = 14
+
+[font.normal]
+family = "IosevkaTerm Nerd Font"
+style = "Regular"
+
+[font.bold]
+family = "IosevkaTerm Nerd Font"
+style = "Bold"
+
+[font.italic]
+family = "IosevkaTerm Nerd Font"
+style = "Italic"
+
+[font.bold_italic]
+family = "IosevkaTerm Nerd Font"
+style = "Bold Italic"
+
+[colors]
+draw_bold_text_with_bright_colors = true
+
+[colors.primary]
+background = "#0a0a0b"
+foreground = "#f3f6f9"
+
+[colors.cursor]
+text = "#0a0a0b"
+cursor = "#e0c15a"
+
+[colors.selection]
+text = "#f3f6f9"
+background = "#1e1e20"
+
+[colors.normal]
+black = "#0a0a0b"
+red = "#cb7c94"
+green = "#b7cc85"
+yellow = "#ffe066"
+blue = "#7fb4ca"
+magenta = "#ff8dd7"
+cyan = "#7aa89f"
+white = "#f3f6f9"
+
+[colors.bright]
+black = "#8a8fa3"
+red = "#de8fa8"
+green = "#d1e8a9"
+yellow = "#fff7b1"
+blue = "#a3d4d5"
+magenta = "#ffaeea"
+cyan = "#7fb4ca"
+white = "#f3f6f9"
+
+# Keybindings matching Ghostty
+[keyboard]
+
+[[keyboard.bindings]]
+action = "ClearHistory"
+key = "K"
+mods = "Control"
+
+# Splits not natively supported in Alacritty - use tmux instead
+# See: https://github.com/alacritty/alacritty/issues/1280
