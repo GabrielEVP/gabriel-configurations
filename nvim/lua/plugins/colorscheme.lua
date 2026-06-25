@@ -42,17 +42,6 @@ return {
         term_colors = true, -- sets terminal colors (e.g. `g:terminal_color_0`)
       },
     },
-    -- Atom colorscheme (local, based on Atom One Dark)
-    {
-      dir = vim.fn.stdpath("config") .. "/lua/atom",
-      name = "atom",
-      priority = 1000,
-      config = function()
-        require("atom").setup({
-          variant = "atom", -- Options: "blur", "sakura_night_blur", "atom"
-        })
-      end,
-    },
     -- Atom One Dark theme
     {
       "navarasu/onedark.nvim",

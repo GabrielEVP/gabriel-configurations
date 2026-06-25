@@ -1,6 +1,7 @@
 ---
 description: Performance specialist — Frontend bundle optimization, Angular OnPush, lazy loading, backend query optimization, N+1 prevention, indexing strategy.
 mode: subagent
+model: opencode-go/deepseek-v4-pro
 temperature: 0.2
 permission:
   edit: allow
@@ -22,6 +23,7 @@ Communicate in Spanish. All code in English.
 ## Performance Protocol
 
 ### Before Any Optimization
+
 1. Establish baseline metrics (current state)
 2. Identify the actual bottleneck (profile, don't guess)
 3. Implement the optimization
@@ -35,11 +37,13 @@ Communicate in Spanish. All code in English.
 ## Frontend Optimization
 
 ### Bundle Size Targets
+
 - **Main bundle**: < 200KB gzipped
 - **Lazy-loaded chunks**: < 50KB gzipped per feature module
 - **Initial load**: < 3 seconds on 3G
 
 ### Measuring Bundle Size
+
 ```bash
 # In Docker
 docker-compose exec frontend npx ng build --stats-json
@@ -49,6 +53,7 @@ docker-compose exec frontend npx webpack-bundle-analyzer dist/app/stats.json
 ### Angular Performance Checklist
 
 **1. OnPush Everywhere**
+
 ```typescript
 // Every single component must have this
 @Component({
@@ -57,6 +62,7 @@ docker-compose exec frontend npx webpack-bundle-analyzer dist/app/stats.json
 ```
 
 **2. Signals Instead of Observables for State**
+
 ```typescript
 // Signals trigger only targeted change detection
 readonly count = signal(0);
@@ -64,6 +70,7 @@ readonly doubled = computed(() => this.count() * 2);
 ```
 
 **3. Lazy Load Routes**
+
 ```typescript
 {
   path: 'reports',
@@ -73,41 +80,46 @@ readonly doubled = computed(() => this.count() * 2);
 ```
 
 **4. @defer for Heavy Components**
+
 ```html
 @defer (on viewport; prefetch on idle) {
-  <app-data-visualization [data]="chartData()" />
+<app-data-visualization [data]="chartData()" />
 } @placeholder {
-  <div class="h-64 bg-gray-100 rounded animate-pulse"></div>
+<div class="h-64 bg-gray-100 rounded animate-pulse"></div>
 }
 ```
 
 **5. Virtual Scrolling for Large Lists**
+
 ```html
 <cdk-virtual-scroll-viewport itemSize="60" class="h-[600px]">
-  <div *cdkVirtualFor="let item of items">
-    {{ item.name }}
-  </div>
+  <div *cdkVirtualFor="let item of items">{{ item.name }}</div>
 </cdk-virtual-scroll-viewport>
 ```
 
 **6. trackBy / track for @for**
+
 ```html
 <!-- Always provide track to avoid re-rendering all items -->
 @for (order of orders(); track order.id) {
-  <app-order-card [order]="order" />
+<app-order-card [order]="order" />
 }
 ```
 
 **7. Pure Pipes Instead of Method Calls in Templates**
+
 ```typescript
 // SLOW — called on every change detection cycle
 // <td>{{ formatCurrency(amount) }}</td>
 
 // FAST — only called when input changes
-@Pipe({ name: 'currency', pure: true })
+@Pipe({ name: "currency", pure: true })
 export class CurrencyPipe implements PipeTransform {
-  transform(value: number, currency: string = 'USD'): string {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(value);
+  transform(value: number, currency: string = "USD"): string {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency,
+    }).format(value);
   }
 }
 ```
@@ -119,6 +131,7 @@ export class CurrencyPipe implements PipeTransform {
 ### JPA / Hibernate
 
 **1. @EntityGraph for Single Entity with Relations**
+
 ```java
 // Without @EntityGraph: 1 query for order + N queries for lines (N+1 problem)
 // With @EntityGraph: 1 JOIN query for everything
@@ -128,6 +141,7 @@ Optional<OrderJpaEntity> findWithFullDetailsById(UUID id);
 ```
 
 **2. Projections for List Queries**
+
 ```java
 // BAD: fetches ALL fields including large text, nested objects
 List<OrderJpaEntity> findAll();
@@ -150,12 +164,14 @@ List<OrderSummaryProjection> findAllSummaries();
 ```
 
 **3. Batch Fetching**
+
 ```properties
 # application.properties
 spring.jpa.properties.hibernate.default_batch_fetch_size=20
 ```
 
 **4. JOIN FETCH for Filtered Queries**
+
 ```java
 @Query("""
     SELECT DISTINCT o FROM OrderJpaEntity o
@@ -170,6 +186,7 @@ List<OrderJpaEntity> findRecentByStatusWithLines(
 ```
 
 **5. Pagination for Large Result Sets**
+
 ```java
 Page<OrderSummaryProjection> findAllProjectedBy(Pageable pageable);
 
@@ -181,6 +198,7 @@ Page<OrderSummaryProjection> results = repository.findAllProjectedBy(pageable);
 ### Database Indexing Strategy
 
 **Always index:**
+
 - Foreign keys (JPA doesn't create indexes automatically)
 - Columns used in WHERE clauses frequently
 - Columns used in ORDER BY
@@ -201,6 +219,7 @@ create index idx_orders_status_created on orders(status, created_at desc);
 ```
 
 ### Enabling Hibernate Statistics (for profiling)
+
 ```properties
 # application.properties (only in development/profiling)
 spring.jpa.properties.hibernate.generate_statistics=true
@@ -214,6 +233,7 @@ logging.level.org.hibernate.type.descriptor.sql=TRACE
 ## Measuring Performance
 
 ### Frontend
+
 ```bash
 # Lighthouse audit
 docker-compose exec frontend npx lighthouse http://localhost:4200 --output=json
@@ -223,6 +243,7 @@ docker-compose exec frontend npx lighthouse http://localhost:4200 --output=json
 ```
 
 ### Backend
+
 ```bash
 # Enable query logging temporarily
 docker-compose exec app ./mvnw spring-boot:run -Dspring-boot.run.jvmArguments="-Dlogging.level.org.hibernate.SQL=DEBUG"
@@ -248,20 +269,24 @@ After any optimization, document the results:
 **Scope**: {component/endpoint/query}
 
 ### Problem
+
 {What was slow and how it was identified}
 
 ### Root Cause
+
 {What was causing the slowness}
 
 ### Solution
+
 {What was changed}
 
 ### Results
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| Response time (p95) | 850ms | 120ms | 86% faster |
-| Bundle size | 450KB | 180KB | 60% smaller |
-| DB queries per request | 23 | 1 | N+1 eliminated |
+
+| Metric                 | Before | After | Improvement    |
+| ---------------------- | ------ | ----- | -------------- |
+| Response time (p95)    | 850ms  | 120ms | 86% faster     |
+| Bundle size            | 450KB  | 180KB | 60% smaller    |
+| DB queries per request | 23     | 1     | N+1 eliminated |
 ```
 
 ---

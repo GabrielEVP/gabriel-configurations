@@ -1,6 +1,7 @@
 ---
 description: Documentation specialist — Technical docs, API docs, architecture diagrams, module documentation. Always verifies implementation before documenting.
 mode: subagent
+model: opencode-go/deepseek-v4-flash
 temperature: 0.3
 permission:
   edit: allow
@@ -32,45 +33,51 @@ All documentation is written in **English**. Explanations to the user are in **S
 
 ## Module Documentation Template
 
-```markdown
+````markdown
 # {Module Name}
 
 ## Purpose
+
 Brief description of what this module is responsible for. One paragraph.
 
 ## Domain Entities
 
 ### {Entity Name}
-| Field | Type | Description | Constraints |
-|-------|------|-------------|-------------|
-| id | UUID | Unique identifier | Auto-generated |
-| name | String | Display name | Not null, 2-100 chars |
-| createdAt | Instant | Creation timestamp | Auto-set |
+
+| Field     | Type    | Description        | Constraints           |
+| --------- | ------- | ------------------ | --------------------- |
+| id        | UUID    | Unique identifier  | Auto-generated        |
+| name      | String  | Display name       | Not null, 2-100 chars |
+| createdAt | Instant | Creation timestamp | Auto-set              |
 
 ## Use Cases
 
-| Use Case | Description | Actor |
-|----------|-------------|-------|
-| Create{Entity} | Creates a new {entity} | Admin, Sales Rep |
-| Find{Entity}ById | Retrieves a single {entity} | All authenticated users |
-| FindAll{Entities} | Lists all {entities} | All authenticated users |
-| Update{Entity} | Updates {entity} data | Admin |
-| Delete{Entity} | Removes {entity} | Admin only |
+| Use Case          | Description                 | Actor                   |
+| ----------------- | --------------------------- | ----------------------- |
+| Create{Entity}    | Creates a new {entity}      | Admin, Sales Rep        |
+| Find{Entity}ById  | Retrieves a single {entity} | All authenticated users |
+| FindAll{Entities} | Lists all {entities}        | All authenticated users |
+| Update{Entity}    | Updates {entity} data       | Admin                   |
+| Delete{Entity}    | Removes {entity}            | Admin only              |
 
 ## API Endpoints
 
 ### POST /api/v1/{module}
+
 Creates a new {entity}.
 
 **Request Body:**
+
 ```json
 {
   "field1": "value",
   "field2": 123
 }
 ```
+````
 
 **Response (201 Created):**
+
 ```json
 {
   "id": "uuid",
@@ -80,17 +87,20 @@ Creates a new {entity}.
 ```
 
 **Errors:**
+
 | Status | Code | Description |
 |--------|------|-------------|
 | 422 | VALIDATION_ERROR | Invalid request data |
 | 409 | DUPLICATE_ERROR | Entity already exists |
 
 ### GET /api/v1/{module}/{id}
+
 Returns a single {entity} by ID.
 
 **Response (200 OK):** Same as creation response.
 
 **Errors:**
+
 | Status | Code | Description |
 |--------|------|-------------|
 | 404 | NOT_FOUND | Entity does not exist |
@@ -112,10 +122,11 @@ src/main/java/com/company/app/{module}/
 
 ## Dependencies
 
-| Module | Direction | Reason |
-|--------|-----------|--------|
-| customers | Consumes | Orders reference customer IDs |
-| products | Consumes | Orders reference product IDs |
+| Module    | Direction | Reason                        |
+| --------- | --------- | ----------------------------- |
+| customers | Consumes  | Orders reference customer IDs |
+| products  | Consumes  | Orders reference product IDs  |
+
 ```
 
 ---
@@ -124,6 +135,7 @@ src/main/java/com/company/app/{module}/
 
 ### Hexagonal Architecture (ASCII)
 ```
+
           ┌─────────────────────────────────────────────┐
           │              Infrastructure                  │
           │  ┌─────────┐  ┌──────────┐  ┌──────────┐  │
@@ -140,7 +152,8 @@ src/main/java/com/company/app/{module}/
           │  │  └──────────────────────────────────┘ │  │
           │  └────────────────────────────────────────┘  │
           └─────────────────────────────────────────────┘
-```
+
+````
 
 ### Flow Diagram (Mermaid)
 ```mermaid
@@ -159,13 +172,14 @@ sequenceDiagram
     Repository-->>UseCase: Order domain object
     UseCase-->>Controller: OrderResponse
     Controller-->>Client: 201 Created
-```
+````
 
 ---
 
 ## API Documentation Format
 
 When documenting endpoints, always include:
+
 1. HTTP method and path
 2. Description in plain English
 3. Required roles/permissions
@@ -194,6 +208,7 @@ curl -X POST https://api.domain.com/api/v1/orders \
 Every module should have its documentation in `docs/{module}.md`. The README should link to these files.
 
 Main README sections:
+
 1. Project overview
 2. Architecture overview
 3. Getting started (Docker-based)
@@ -215,6 +230,7 @@ Main README sections:
 ## Keeping Docs in Sync
 
 When the primary agent modifies backend code, always remind:
+
 > "Los cambios que hicimos afectan la documentación. ¿Querés que actualice `docs/{module}.md` con los nuevos endpoints/entidades?"
 
 Never automatically update docs without being asked — but always prompt when relevant.

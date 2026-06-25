@@ -1,1 +1,4 @@
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# Homebrew (Linuxbrew) - solo si está instalado
+if command -v /home/linuxbrew/.linuxbrew/bin/brew &>/dev/null; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi

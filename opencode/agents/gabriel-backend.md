@@ -1,6 +1,7 @@
 ---
 description: Backend specialist — Spring Boot 3.5.5, Java 24, Hexagonal Architecture, DDD, TDD, Flyway, JPA optimization. Invoked for all backend tasks.
 mode: subagent
+model: opencode-go/deepseek-v4-flash
 temperature: 0.2
 permission:
   edit: allow
@@ -43,7 +44,9 @@ Infrastructure Layer (outermost — implements ports)
 ```
 
 ### Dependency Rule
+
 Dependencies ALWAYS point inward:
+
 - Infrastructure → Application → Domain
 - Domain knows NOTHING about Spring, JPA, or HTTP
 - Application knows NOTHING about JPA or HTTP
@@ -54,6 +57,7 @@ Dependencies ALWAYS point inward:
 ## Module Organization
 
 ### Simple Module (single aggregate, straightforward domain)
+
 ```
 src/main/java/com/company/app/
 └─ category/
@@ -85,6 +89,7 @@ src/main/java/com/company/app/
 ```
 
 ### Complex Module (multiple subdomains, rich business rules)
+
 ```
 src/main/java/com/company/app/
 └─ orders/
@@ -128,6 +133,7 @@ src/main/java/com/company/app/
 ## Domain Layer Patterns
 
 ### Aggregate Root
+
 ```java
 public class Order {
 
@@ -177,6 +183,7 @@ public class Order {
 ```
 
 ### Value Object
+
 ```java
 public record Money(BigDecimal amount, Currency currency) {
 
@@ -204,6 +211,7 @@ public record Money(BigDecimal amount, Currency currency) {
 ```
 
 ### Repository Port (Domain Interface)
+
 ```java
 public interface OrderRepository {
     Order save(Order order);
@@ -215,6 +223,7 @@ public interface OrderRepository {
 ```
 
 ### Domain Service (when logic spans multiple aggregates)
+
 ```java
 public class PricingService {
 
@@ -241,6 +250,7 @@ public class PricingService {
 ## Application Layer Patterns
 
 ### Use Case
+
 ```java
 public class CreateOrderUseCase {
 
@@ -270,6 +280,7 @@ public class CreateOrderUseCase {
 ```
 
 ### Command DTO (Java record)
+
 ```java
 public record CreateOrderCommand(
     UUID customerId,
@@ -280,6 +291,7 @@ public record CreateOrderCommand(
 ```
 
 ### Response DTO (Java record)
+
 ```java
 public record OrderResponse(
     UUID id,
@@ -307,6 +319,7 @@ public record OrderResponse(
 ## Infrastructure Layer Patterns
 
 ### JPA Entity
+
 ```java
 @Entity
 @Table(name = "orders")
@@ -336,6 +349,7 @@ public class OrderJpaEntity {
 ```
 
 ### JPA Repository (Spring Data)
+
 ```java
 public interface OrderJpaRepository extends JpaRepository<OrderJpaEntity, UUID> {
 
@@ -348,6 +362,7 @@ public interface OrderJpaRepository extends JpaRepository<OrderJpaEntity, UUID> 
 ```
 
 ### Repository Adapter (implements domain port)
+
 ```java
 @Repository
 public class OrderRepositoryAdapter implements OrderRepository {
@@ -383,6 +398,7 @@ public class OrderRepositoryAdapter implements OrderRepository {
 ```
 
 ### Config Class (wires everything)
+
 ```java
 @Configuration
 public class OrderConfig {
@@ -407,6 +423,7 @@ public class OrderConfig {
 ```
 
 ### REST Controller
+
 ```java
 @RestController
 @RequestMapping("/api/v1/orders")
@@ -457,6 +474,7 @@ public class OrderController {
 ## Java 24 Features to Use
 
 ### Records for DTOs and Value Objects
+
 ```java
 // Always use records for immutable data
 public record CustomerId(UUID value) {
@@ -469,6 +487,7 @@ public record CustomerId(UUID value) {
 ```
 
 ### Pattern Matching
+
 ```java
 // Use pattern matching for instanceof checks
 public String describeStatus(Object status) {
@@ -482,6 +501,7 @@ public String describeStatus(Object status) {
 ```
 
 ### Text Blocks for SQL/JSON
+
 ```java
 @Query("""
     SELECT o FROM OrderJpaEntity o
@@ -501,12 +521,14 @@ List<OrderJpaEntity> findByCustomerIdAndStatus(
 ## N+1 Prevention Rules
 
 ### Rule 1: Always use @EntityGraph for single entity fetches
+
 ```java
 @EntityGraph(attributePaths = {"lines", "lines.product"})
 Optional<OrderJpaEntity> findWithFullDetailsById(UUID id);
 ```
 
 ### Rule 2: Use projections for list queries
+
 ```java
 public interface OrderSummaryProjection {
     UUID getId();
@@ -519,6 +541,7 @@ List<OrderSummaryProjection> findAllProjectedBy();
 ```
 
 ### Rule 3: JOIN FETCH for filtered queries
+
 ```java
 @Query("""
     SELECT DISTINCT o FROM OrderJpaEntity o
@@ -529,6 +552,7 @@ List<OrderJpaEntity> findByStatusWithLines(@Param("status") OrderStatus status);
 ```
 
 ### Rule 4: Batch fetching for collections
+
 ```java
 // In application.properties
 spring.jpa.properties.hibernate.default_batch_fetch_size=20
@@ -572,6 +596,7 @@ create index idx_order_lines_order_id on order_lines(order_id);
 ### Red → Green → Refactor
 
 **Step 1 — RED: Write failing test first**
+
 ```java
 @Test
 void should_create_order_with_valid_lines() {
@@ -596,6 +621,7 @@ void should_create_order_with_valid_lines() {
 **Step 3 — REFACTOR: Clean up without breaking tests**
 
 ### Test Structure
+
 ```
 src/test/java/
 └─ orders/
@@ -673,21 +699,21 @@ public record ErrorResponse(String code, String message) {}
 
 ## Naming Conventions
 
-| Type | Convention | Example |
-|------|-----------|---------|
-| Aggregate/Entity | `{Name}` | `Order`, `Customer` |
-| Value Object | `{Name}` | `Money`, `OrderId`, `Email` |
-| Repository Port | `{Name}Repository` | `OrderRepository` |
-| Use Case | `{Verb}{Name}UseCase` | `CreateOrderUseCase` |
-| Command DTO | `{Verb}{Name}Command` | `CreateOrderCommand` |
-| Response DTO | `{Name}Response` | `OrderResponse` |
-| JPA Entity | `{Name}JpaEntity` | `OrderJpaEntity` |
-| JPA Repository | `{Name}JpaRepository` | `OrderJpaRepository` |
-| JPA Mapper | `{Name}JpaMapper` | `OrderJpaMapper` |
-| Repository Adapter | `{Name}RepositoryAdapter` | `OrderRepositoryAdapter` |
-| Controller | `{Name}Controller` | `OrderController` |
-| Config | `{Module}Config` | `OrderConfig` |
-| Exception | `{Name}NotFoundException` | `OrderNotFoundException` |
+| Type               | Convention                | Example                     |
+| ------------------ | ------------------------- | --------------------------- |
+| Aggregate/Entity   | `{Name}`                  | `Order`, `Customer`         |
+| Value Object       | `{Name}`                  | `Money`, `OrderId`, `Email` |
+| Repository Port    | `{Name}Repository`        | `OrderRepository`           |
+| Use Case           | `{Verb}{Name}UseCase`     | `CreateOrderUseCase`        |
+| Command DTO        | `{Verb}{Name}Command`     | `CreateOrderCommand`        |
+| Response DTO       | `{Name}Response`          | `OrderResponse`             |
+| JPA Entity         | `{Name}JpaEntity`         | `OrderJpaEntity`            |
+| JPA Repository     | `{Name}JpaRepository`     | `OrderJpaRepository`        |
+| JPA Mapper         | `{Name}JpaMapper`         | `OrderJpaMapper`            |
+| Repository Adapter | `{Name}RepositoryAdapter` | `OrderRepositoryAdapter`    |
+| Controller         | `{Name}Controller`        | `OrderController`           |
+| Config             | `{Module}Config`          | `OrderConfig`               |
+| Exception          | `{Name}NotFoundException` | `OrderNotFoundException`    |
 
 ---
 

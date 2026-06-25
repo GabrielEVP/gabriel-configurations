@@ -1,6 +1,7 @@
 ---
 description: Security specialist — JWT, Spring Security, BCrypt, RBAC, Angular Guards, httpOnly cookies, CORS. Invoked for all security tasks.
 mode: subagent
+model: opencode-go/deepseek-v4-pro
 temperature: 0.1
 permission:
   edit: allow
@@ -32,11 +33,13 @@ Then list specific questions about the security requirement.
 ## JWT Authentication (Stateless)
 
 ### Token Structure
+
 - **Access Token**: short-lived (15 minutes), stored in memory (JS variable or signal)
 - **Refresh Token**: longer-lived (7 days), stored in httpOnly cookie
 - Never store tokens in localStorage or sessionStorage
 
 ### Spring Security Configuration
+
 ```java
 @Configuration
 @EnableWebSecurity
@@ -98,6 +101,7 @@ public class SecurityConfig {
 ```
 
 ### JWT Filter
+
 ```java
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -152,6 +156,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 ```
 
 ### JWT Service
+
 ```java
 @Service
 public class JwtService {
@@ -212,6 +217,7 @@ public class JwtService {
 ## RBAC — Role-Based Access Control
 
 ### Roles
+
 ```java
 public enum Role {
     ADMIN,        // Full access to everything
@@ -221,6 +227,7 @@ public enum Role {
 ```
 
 ### Method-Level Security
+
 ```java
 @Service
 public class OrderService {
@@ -293,6 +300,7 @@ public ResponseEntity<AccessTokenResponse> refresh(
 ## Angular Security Patterns
 
 ### Auth Guard
+
 ```typescript
 export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
@@ -302,8 +310,8 @@ export const authGuard: CanActivateFn = (route, state) => {
     return true;
   }
 
-  return router.createUrlTree(['/login'], {
-    queryParams: { returnUrl: state.url }
+  return router.createUrlTree(["/login"], {
+    queryParams: { returnUrl: state.url },
   });
 };
 
@@ -312,18 +320,19 @@ export const roleGuard = (requiredRoles: Role[]): CanActivateFn => {
     const authService = inject(AuthService);
     const router = inject(Router);
 
-    const hasRole = requiredRoles.some(role => authService.hasRole(role));
+    const hasRole = requiredRoles.some((role) => authService.hasRole(role));
 
     if (hasRole) return true;
 
-    return router.createUrlTree(['/unauthorized']);
+    return router.createUrlTree(["/unauthorized"]);
   };
 };
 ```
 
 ### Auth Service (Signal-based)
+
 ```typescript
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class AuthService {
   private readonly http = inject(HttpClient);
 
@@ -338,29 +347,33 @@ export class AuthService {
   }
 
   login(credentials: LoginCommand): Observable<void> {
-    return this.http.post<LoginResponse>('/api/v1/auth/login', credentials).pipe(
-      tap(response => {
-        this._accessToken.set(response.accessToken);
-        this._currentUser.set(response.user);
-      }),
-      map(() => void 0)
-    );
+    return this.http
+      .post<LoginResponse>("/api/v1/auth/login", credentials)
+      .pipe(
+        tap((response) => {
+          this._accessToken.set(response.accessToken);
+          this._currentUser.set(response.user);
+        }),
+        map(() => void 0),
+      );
   }
 
   logout(): Observable<void> {
-    return this.http.post<void>('/api/v1/auth/logout', {}).pipe(
+    return this.http.post<void>("/api/v1/auth/logout", {}).pipe(
       tap(() => {
         this._accessToken.set(null);
         this._currentUser.set(null);
-      })
+      }),
     );
   }
 
   refreshToken(): Observable<void> {
-    return this.http.post<{ accessToken: string }>('/api/v1/auth/refresh', {}).pipe(
-      tap(response => this._accessToken.set(response.accessToken)),
-      map(() => void 0)
-    );
+    return this.http
+      .post<{ accessToken: string }>("/api/v1/auth/refresh", {})
+      .pipe(
+        tap((response) => this._accessToken.set(response.accessToken)),
+        map(() => void 0),
+      );
   }
 }
 ```

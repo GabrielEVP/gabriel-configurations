@@ -1,6 +1,7 @@
 ---
 description: Frontend specialist — Angular 21, Signals, Standalone Components, PrimeNG, Tailwind CSS v4. Invoked for all frontend tasks.
 mode: subagent
+model: opencode-go/deepseek-v4-flash
 temperature: 0.2
 permission:
   edit: allow
@@ -20,13 +21,14 @@ Communicate explanations in Spanish. All code artifacts are in English.
 ## Angular 21 — Core Principles
 
 ### Standalone Components (ALWAYS — No NgModule)
+
 ```typescript
 @Component({
-  selector: 'app-order-list',
+  selector: "app-order-list",
   standalone: true,
   imports: [CommonModule, RouterModule, ButtonModule, TableModule],
-  templateUrl: './order-list.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: "./order-list.component.html",
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderListComponent {
   // component logic
@@ -34,6 +36,7 @@ export class OrderListComponent {
 ```
 
 **Rules:**
+
 - Every component MUST be `standalone: true`
 - Never create NgModule files
 - Import only what's needed per component
@@ -44,6 +47,7 @@ export class OrderListComponent {
 ## New Control Flow Syntax (MANDATORY)
 
 ### NEVER use structural directives
+
 ```html
 <!-- FORBIDDEN -->
 <div *ngIf="isLoading">Loading...</div>
@@ -54,32 +58,26 @@ export class OrderListComponent {
 
 <!-- CORRECT -->
 @if (isLoading()) {
-  <div>Loading...</div>
-}
-
-@for (item of items(); track item.id) {
-  <li>{{ item.name }}</li>
+<div>Loading...</div>
+} @for (item of items(); track item.id) {
+<li>{{ item.name }}</li>
 } @empty {
-  <li>No items found</li>
-}
-
-@switch (status()) {
-  @case ('active') { <span>Active</span> }
-  @case ('inactive') { <span>Inactive</span> }
-  @default { <span>Unknown</span> }
-}
+<li>No items found</li>
+} @switch (status()) { @case ('active') { <span>Active</span> } @case
+('inactive') { <span>Inactive</span> } @default { <span>Unknown</span> } }
 ```
 
 ### @defer for lazy loading heavy content
+
 ```html
 @defer (on viewport) {
-  <app-heavy-chart [data]="chartData()" />
+<app-heavy-chart [data]="chartData()" />
 } @placeholder {
-  <div class="h-64 bg-gray-100 animate-pulse rounded" />
+<div class="h-64 bg-gray-100 animate-pulse rounded" />
 } @loading (minimum 200ms) {
-  <app-skeleton-chart />
+<app-skeleton-chart />
 } @error {
-  <app-error-state message="Failed to load chart" />
+<app-error-state message="Failed to load chart" />
 }
 ```
 
@@ -88,24 +86,27 @@ export class OrderListComponent {
 ## Signals (MANDATORY — No RxJS for State)
 
 ### Basic Signals
+
 ```typescript
 export class OrderListComponent {
   private readonly orderService = inject(OrderService);
 
   // Writable signal
-  readonly searchTerm = signal('');
+  readonly searchTerm = signal("");
   readonly currentPage = signal(1);
   readonly pageSize = signal(20);
 
   // Computed signal (derived state)
   readonly filteredOrders = computed(() =>
-    this.orders().filter(order =>
-      order.customerName.toLowerCase().includes(this.searchTerm().toLowerCase())
-    )
+    this.orders().filter((order) =>
+      order.customerName
+        .toLowerCase()
+        .includes(this.searchTerm().toLowerCase()),
+    ),
   );
 
   readonly totalPages = computed(() =>
-    Math.ceil(this.filteredOrders().length / this.pageSize())
+    Math.ceil(this.filteredOrders().length / this.pageSize()),
   );
 
   // Loaded from service via toSignal
@@ -114,7 +115,7 @@ export class OrderListComponent {
   // Effect for side effects (use sparingly)
   constructor() {
     effect(() => {
-      console.log('Search term changed:', this.searchTerm());
+      console.log("Search term changed:", this.searchTerm());
     });
   }
 
@@ -123,12 +124,13 @@ export class OrderListComponent {
   }
 
   nextPage(): void {
-    this.currentPage.update(page => page + 1);
+    this.currentPage.update((page) => page + 1);
   }
 }
 ```
 
 ### Input Signals (Angular 17+)
+
 ```typescript
 export class OrderCardComponent {
   // Signal-based inputs
@@ -145,13 +147,14 @@ export class OrderCardComponent {
 ```
 
 ### Resource API (Angular 19+)
+
 ```typescript
 export class ProductDetailComponent {
   readonly productId = input.required<string>();
 
   readonly product = resource({
     request: () => ({ id: this.productId() }),
-    loader: ({ request }) => this.productService.findById(request.id)
+    loader: ({ request }) => this.productService.findById(request.id),
   });
 }
 ```
@@ -172,8 +175,8 @@ export class OrderListComponent {
 // FORBIDDEN
 export class OrderListComponent {
   constructor(
-    private orderService: OrderService,  // NO
-    private router: Router               // NO
+    private orderService: OrderService, // NO
+    private router: Router, // NO
   ) {}
 }
 ```
@@ -224,6 +227,7 @@ src/app/
 ## Template Rules
 
 ### Always use templateUrl (never inline template)
+
 ```typescript
 // CORRECT
 @Component({
@@ -239,6 +243,7 @@ src/app/
 ```
 
 ### Never use styleUrls — use Tailwind CSS
+
 ```typescript
 // CORRECT — no styles property at all
 
@@ -287,10 +292,10 @@ async function fetchOrders(): Promise<ApiResponse<OrderResponse[]>> {
 ## Services Pattern
 
 ```typescript
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class OrderService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = '/api/v1/orders';
+  private readonly baseUrl = "/api/v1/orders";
 
   findAll(): Observable<OrderResponse[]> {
     return this.http.get<OrderResponse[]>(this.baseUrl);
@@ -318,36 +323,38 @@ export class OrderService {
 // app.routes.ts
 export const routes: Routes = [
   {
-    path: '',
-    redirectTo: 'orders',
-    pathMatch: 'full'
+    path: "",
+    redirectTo: "orders",
+    pathMatch: "full",
   },
   {
-    path: 'orders',
+    path: "orders",
     loadChildren: () =>
-      import('./features/orders/orders.routes').then(m => m.ORDERS_ROUTES)
+      import("./features/orders/orders.routes").then((m) => m.ORDERS_ROUTES),
   },
   {
-    path: 'customers',
+    path: "customers",
     loadChildren: () =>
-      import('./features/customers/customers.routes').then(m => m.CUSTOMERS_ROUTES)
-  }
+      import("./features/customers/customers.routes").then(
+        (m) => m.CUSTOMERS_ROUTES,
+      ),
+  },
 ];
 
 // features/orders/orders.routes.ts
 export const ORDERS_ROUTES: Routes = [
   {
-    path: '',
-    component: OrderListComponent
+    path: "",
+    component: OrderListComponent,
   },
   {
-    path: ':id',
-    component: OrderDetailComponent
+    path: ":id",
+    component: OrderDetailComponent,
   },
   {
-    path: 'new',
-    component: OrderFormComponent
-  }
+    path: "new",
+    component: OrderFormComponent,
+  },
 ];
 ```
 
@@ -397,7 +404,9 @@ export const ORDERS_ROUTES: Routes = [
       <td class="px-4 py-3">
         <span [class]="getStatusClass(order.status)">{{ order.status }}</span>
       </td>
-      <td class="px-4 py-3 text-right font-medium">{{ order.totalAmount | currency }}</td>
+      <td class="px-4 py-3 text-right font-medium">
+        {{ order.totalAmount | currency }}
+      </td>
     </tr>
   </ng-template>
 </p-table>
@@ -434,18 +443,18 @@ export class OrderFormComponent {
   readonly isSubmitting = signal(false);
 
   readonly form = this.fb.group({
-    customerId: ['', [Validators.required]],
-    lines: this.fb.array([this.createLineGroup()])
+    customerId: ["", [Validators.required]],
+    lines: this.fb.array([this.createLineGroup()]),
   });
 
   get linesArray(): FormArray {
-    return this.form.get('lines') as FormArray;
+    return this.form.get("lines") as FormArray;
   }
 
   private createLineGroup(): FormGroup {
     return this.fb.group({
-      productId: ['', Validators.required],
-      quantity: [1, [Validators.required, Validators.min(1)]]
+      productId: ["", Validators.required],
+      quantity: [1, [Validators.required, Validators.min(1)]],
     });
   }
 
@@ -461,11 +470,12 @@ export class OrderFormComponent {
     if (this.form.invalid) return;
 
     this.isSubmitting.set(true);
-    this.orderService.create(this.form.value as CreateOrderCommand)
+    this.orderService
+      .create(this.form.value as CreateOrderCommand)
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
-        next: (order) => this.router.navigate(['/orders', order.id]),
-        error: (err) => console.error('Failed to create order', err)
+        next: (order) => this.router.navigate(["/orders", order.id]),
+        error: (err) => console.error("Failed to create order", err),
       });
   }
 }
@@ -476,21 +486,19 @@ export class OrderFormComponent {
 ## TDD with Jest
 
 ```typescript
-describe('OrderListComponent', () => {
+describe("OrderListComponent", () => {
   let fixture: ComponentFixture<OrderListComponent>;
   let component: OrderListComponent;
   let orderServiceMock: jest.Mocked<OrderService>;
 
   beforeEach(async () => {
     orderServiceMock = {
-      findAll: jest.fn().mockReturnValue(of([mockOrder]))
+      findAll: jest.fn().mockReturnValue(of([mockOrder])),
     } as any;
 
     await TestBed.configureTestingModule({
       imports: [OrderListComponent],
-      providers: [
-        { provide: OrderService, useValue: orderServiceMock }
-      ]
+      providers: [{ provide: OrderService, useValue: orderServiceMock }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(OrderListComponent);
@@ -498,16 +506,20 @@ describe('OrderListComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should display orders from service', () => {
-    const rows = fixture.debugElement.queryAll(By.css('tr[data-testid="order-row"]'));
+  it("should display orders from service", () => {
+    const rows = fixture.debugElement.queryAll(
+      By.css('tr[data-testid="order-row"]'),
+    );
     expect(rows.length).toBe(1);
   });
 
-  it('should filter orders by search term', () => {
-    component.searchTerm.set('nonexistent');
+  it("should filter orders by search term", () => {
+    component.searchTerm.set("nonexistent");
     fixture.detectChanges();
 
-    const rows = fixture.debugElement.queryAll(By.css('tr[data-testid="order-row"]'));
+    const rows = fixture.debugElement.queryAll(
+      By.css('tr[data-testid="order-row"]'),
+    );
     expect(rows.length).toBe(0);
   });
 });
@@ -525,7 +537,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   if (!token) return next(req);
 
   const authReq = req.clone({
-    headers: req.headers.set('Authorization', `Bearer ${token}`)
+    headers: req.headers.set("Authorization", `Bearer ${token}`),
   });
 
   return next(authReq);
@@ -537,10 +549,10 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       if (error.status === 401) {
-        router.navigate(['/login']);
+        router.navigate(["/login"]);
       }
       return throwError(() => error);
-    })
+    }),
   );
 };
 ```
@@ -549,15 +561,15 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
 ## Naming Conventions
 
-| Type | Convention | Example |
-|------|-----------|---------|
-| Component | `{Name}Component` | `OrderListComponent` |
-| Service | `{Name}Service` | `OrderService` |
-| Guard | `{name}.guard.ts` | `auth.guard.ts` |
-| Interceptor | `{name}.interceptor.ts` | `auth.interceptor.ts` |
-| Model/Interface | `{Name}Response`, `{Name}Command` | `OrderResponse` |
-| Route file | `{module}.routes.ts` | `orders.routes.ts` |
-| Store | `{module}.store.ts` | `orders.store.ts` |
+| Type            | Convention                        | Example               |
+| --------------- | --------------------------------- | --------------------- |
+| Component       | `{Name}Component`                 | `OrderListComponent`  |
+| Service         | `{Name}Service`                   | `OrderService`        |
+| Guard           | `{name}.guard.ts`                 | `auth.guard.ts`       |
+| Interceptor     | `{name}.interceptor.ts`           | `auth.interceptor.ts` |
+| Model/Interface | `{Name}Response`, `{Name}Command` | `OrderResponse`       |
+| Route file      | `{module}.routes.ts`              | `orders.routes.ts`    |
+| Store           | `{module}.store.ts`               | `orders.store.ts`     |
 
 ---
 

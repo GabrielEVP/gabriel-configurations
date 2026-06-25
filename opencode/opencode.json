@@ -1,29 +1,24 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "autoupdate": true,
   "provider": {
-    "ollama": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "LLMStudio (local)",
-      "options": {
-        "baseURL": "http://127.0.0.1:1234/v1"
-      },
+    "opencode-go": {
       "models": {
-        "google/gemma-4-e4b": {
-          "name": "gemma-4-e4b"
+        "opencode-go/deepseek-v4-pro": {
+          "name": "DeepSeek V4 Pro"
         }
       }
     }
   },
-  "autoupdate": true,
   "lsp": {
     "angular": {
       "command": [
-        "/Users/gabrielvargas/.local/share/nvim/mason/bin/ngserver",
+        "/home/gabriel/.local/share/nvim/mason/bin/ngserver",
         "--stdio",
         "--tsProbeLocations",
-        "/Users/gabrielvargas/.local/share/nvim/mason/packages/angular-language-server/node_modules/typescript/lib",
+        "/home/gabriel/.local/share/nvim/mason/packages/angular-language-server/node_modules/typescript/lib",
         "--ngProbeLocations",
-        "/Users/gabrielvargas/.local/share/nvim/mason/packages/angular-language-server/node_modules/@angular/language-service"
+        "/home/gabriel/.local/share/nvim/mason/packages/angular-language-server/node_modules/@angular/language-service"
       ],
       "extensions": [".ts"]
     }
@@ -40,7 +35,7 @@
       "url": "https://mcp.context7.com/mcp"
     },
     "docker": {
-      "command": ["docker", "mcp", "gateway", "run", "--transport=stdio"],
+      "command": ["docker-mcp-server"],
       "enabled": true,
       "type": "local"
     },
@@ -59,7 +54,15 @@
       "url": "https://mcp.grep.app"
     },
     "github": {
-      "command": ["/opt/homebrew/bin/github-mcp-server", "stdio"],
+      "command": [
+        "docker",
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "ghcr.io/github/github-mcp-server"
+      ],
       "enabled": true,
       "environment": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "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"
@@ -87,6 +90,11 @@
       "command": ["npx", "-y", "@playwright/mcp@latest"],
       "enabled": true,
       "environment": {},
+      "type": "local"
+    },
+    "primeng": {
+      "command": ["node", "/home/gabriel/.local/share/primeng-mcp/node_modules/.bin/primeng-mcp"],
+      "enabled": true,
       "type": "local"
     }
   },
@@ -116,7 +124,5 @@
       "*.env.*": "deny"
     }
   },
-  "plugin": [
-    "@superwhisper/opencode"
-  ]
+  "plugin": ["@superwhisper/opencode"]
 }
