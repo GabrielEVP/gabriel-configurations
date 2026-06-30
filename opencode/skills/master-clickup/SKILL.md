@@ -1,10 +1,10 @@
 ---
 name: master-clickup
-description: "Trigger: clickup, task, tarea, modulo, module, parsun, lexand, proyecto, workspace, doc, documentacion. ClickUp workspace management for Parsun & Lexand. Create module tasks with phase subtasks (Fase N — Layer: Description), document modules in the Modulos doc following the standard template (DB structure, migrations, folder structure, business rules, endpoints), assign to Gabriel, set priority, create dependencies between subtasks, sync doc on completion."
+description: "Trigger: clickup, task, tarea, modulo, module, parsun, lexand, proyecto, workspace, doc, documentacion. ClickUp workspace management for Parsun & Lexand. Create module tasks with grouped subtasks by layer (📁 Database Seeder → 📁 Backend → 📁 Frontend → 📁 Reports), each with its own priority; document modules in the Modulos doc following the standard template (DB structure, migrations + seed, folder structure, business rules, endpoints, tests — backend + frontend with coverage), assign to Gabriel, set priority, sync doc on completion."
 license: Apache-2.0
 metadata:
   author: gabriel
-  version: "2.0"
+  version: "2.2"
 ---
 
 # Master ClickUp
@@ -62,42 +62,66 @@ Before creating or updating ANY task or doc, ALWAYS:
 
 ### Parent Task Pattern
 
-A parent task represents a complete module/feature:
+A parent task represents a complete module/feature. Usa tags para categorizar y una descripción que indique el propósito y referencias a diseño:
 
 ```json
 {
   "name": "Módulo {Name}",
   "list_id": "901217812567",
-  "priority": "urgent|high|normal|low",
+  "priority": "high",
   "assignees": [296620700],
   "tags": ["parsun"],
-  "markdown_description": "Implementación completa del Módulo de {Name} para Parsun.\n\nIncluye: {summary}.\n\nVer documento de diseño en ClickUp: \"{DocName}\" en el doc Módulos."
+  "markdown_description": "Implementación completa del Módulo de {Name} para Parsun.\n\nIncluye: {summary}.\n\n**Guía de diseño:** {referencia de diseño, ej: \"Copiar el diseño de páginas y componentes del frontend del módulo Customers\"}.\n\nVer documento de diseño en ClickUp: \"{DocName}\" en el doc Módulos."
 }
 ```
 
-### Subtask Pattern (Phases)
+### Subtask Pattern — Grouped by Layer (Orders-style)
+
+Las subtareas se organizan en **agrupadores por capa** (no por fases numéricas). Cada agrupador es una subtask que contiene subtareas hijas específicas.
+
+Cada agrupador tiene su propia **prioridad** según la carga de trabajo de esa capa.
 
 ```
-Fase {N} — Database: {description of DB changes}
-Fase {N} — Backend: {description of backend changes}
-Fase {N} — Frontend: {description of frontend changes}
+{Módulo}
+│
+├── 📁 Database Seeder          (priority: low)
+│   ├── Create Flyway migrations for {module} tables
+│   └── Seed {module} with {statuses or initial data}
+│
+├── 📁 Backend                  (priority: high)
+│   ├── {UseCase}: {description}
+│   ├── {UseCase}: {description}
+│   └── Implement {Entity}Controller
+│
+├── 📁 Frontend                 (priority: high)
+│   ├── {Module} Routing & Shell
+│   ├── {Module}Service (HTTP Client)
+│   ├── {Entity}ListComponent
+│   ├── {Entity}FormComponent (Create & Edit)
+│   ├── {Entity}DetailComponent
+│   └── {specific components}
+│
+└── 📁 Reports                  (priority: normal, opcional)
+    ├── {Report} PDF Template Design
+    └── {Report} Controller / Download Action
 ```
 
-- Each phase (Fase 1, 2, 3...) has up to 3 subtasks: Database, Backend, Frontend
-- Database tasks go first (migrations), then Backend, then Frontend
-- All subtasks: assignee = Gabriel (296620700), same priority as parent, tags = ["parsun", "{module-name}"]
+**Reglas:**
+- **Database Seeder**: Siempre priority `low` (es rápida). Incluye migraciones DDL + seed DML.
+- **Backend**: Siempre priority `high` (mayor complejidad técnica).
+- **Frontend**: Siempre priority `high` (múltiples componentes + servicios).
+- **Reports**: Priority `normal` (opcional, solo si el módulo genera reportes PDF).
+- Todas las subtasks (agrupadores e hijas): assignee = Gabriel (`296620700`).
+- Tags en las subtasks hijas: `["parsun", "{module-name}"]` (solo en las hojas, no en los agrupadores).
+- **No se usan dependencias** entre agrupadores — cada uno se trabaja de forma independiente.
 
-### Adding Dependencies Between Subtasks
+### Agrupador vs Fase: ¿Cuándo usar cada uno?
 
-After creating subtasks, add dependencies so phases execute in order:
-
-| Dependency | Type | Why |
-|------------|------|-----|
-| Fase 1 DB → Fase 1 Backend | `waiting_on` | Backend needs DB tables |
-| Fase 1 Backend → Fase 1 Frontend | `waiting_on` | Frontend needs API endpoints |
-| Fase 1 Frontend → Fase 2 DB | `waiting_on` | Phase 2 needs Phase 1 complete |
-
-Use `clickup_add_task_dependency(task_id, depends_on, type: "waiting_on")` for each pair.
+| Situación | Patrón |
+|-----------|--------|
+| Módulo con capas bien definidas (DB, Backend, Frontend) | 📁 **Grouped by Layer** (Orders-style) |
+| Funcionalidad pequeña sin frontend (ej. solo backend) | Subtask directa sin agrupador |
+| Módulo con entregas progresivas (Fase 1, luego Fase 2) | **Fases** (Lexand-style) |
 
 ### Syncing Docs on Task Completion
 
@@ -204,9 +228,12 @@ POST   /api/{module}
 |--------|--------|--------|
 | Doc ID | `2kxurc2r-1012` | `2kxurc2r-832` |
 | IDs | `BINARY(16)` UUID | `BIGINT AUTO_INCREMENT` |
-| Template | Tabular (DB tables, migrations) | SQL blocks, more narrative |
+| Template | Tabular (DB tables, migrations, seed) | SQL blocks, more narrative |
 | Task naming | `Fase N — Layer: desc` | `Fase N — Module: desc` |
 | Tags | `parsun` | `lexand` |
+| Migrations | Incluye seed data versionado | Incluye seed data versionado |
+| Tests | Unitarios + API + Integración + Frontend | Unitarios + API + Integración + Frontend |
+| Cobertura | Mínimo 80% frontend, ~90% API | Mínimo 80% frontend, ~90% API |
 
 When documenting, ALWAYS check which project the task belongs to and use the corresponding template.
 
@@ -270,6 +297,18 @@ Módulo encargado de la {gestión/funcionalidad} de {entidad} en Parsun. Permite
 |---------|---------|-------------|
 | V{N} | `V{N}__{description}.sql` | {what it creates} |
 
+**Nota:** Las migraciones incluyen tanto DDL (creación de tablas) como DML (seed data).
+Cada módulo tiene sus propios seed scripts versionados que se ejecutan después de las tablas.
+
+### Seed Data
+
+| Versión | Archivo | Descripción |
+|---------|---------|-------------|
+| V{N} | `V{N}__seed_{module}.sql` | Datos iniciales del módulo |
+
+Los seed scripts se colocan en `src/main/resources/db/migration/` con el versionado
+Flyway estándar. Cada módulo tiene su seed junto a las migraciones de estructura.
+
 * * *
 
 ## Estructura de Carpetas
@@ -277,25 +316,75 @@ Módulo encargado de la {gestión/funcionalidad} de {entidad} en Parsun. Permite
 ### Backend
 
 ```
-{module}/
+{módulo}/
 ├── domain/
 │   ├── entities/
-│   │   └── {Entity}.java
+│   │   ├── {Entity}.java
+│   │   └── {ChildEntity}.java
 │   ├── valueobjects/
-│   │   └── ...
+│   │   ├── {Entity}Id.java
+│   │   ├── {Field}Value.java
+│   │   └── {Type}Enum.java          # Enum
 │   └── repositories/
-│       └── {Entity}Repository.java
+│       ├── {Entity}Repository.java
+│       └── {ChildEntity}Repository.java
 ├── application/
 │   ├── usecases/
-│   │   └── ...
+│   │   ├── Register{Entity}UseCase.java
+│   │   ├── Update{Entity}UseCase.java
+│   │   ├── Get{Entity}UseCase.java
+│   │   ├── List{Entity}sUseCase.java
+│   │   ├── Delete{Entity}UseCase.java
+│   │   └── ...UseCase.java
 │   ├── dto/
 │   │   ├── request/
+│   │   │   ├── Create{Entity}Request.java
+│   │   │   ├── Update{Entity}Request.java
+│   │   │   └── {Child}Request.java
 │   │   └── response/
+│   │       ├── {Entity}ListResponse.java
+│   │       ├── {Entity}DetailResponse.java
+│   │       ├── {Entity}CreateResponse.java
+│   │       └── {Child}Response.java
 │   └── mappers/
+│       └── {Entity}Mapper.java
 └── infrastructure/
     ├── web/
+    │   └── {Entity}Controller.java
     ├── persistence/
+    │   ├── entities/
+    │   │   ├── {Entity}Entity.java
+    │   │   └── {Child}Entity.java
+    │   └── repositories/
+    │       ├── Jpa{Entity}Repository.java
+    │       ├── SpringData{Entity}Repository.java
+    │       └── SpringData{Child}Repository.java
+    ├── services/
+    │   └── Sequential{Field}Generator.java
     └── config/
+        └── {Entity}Config.java
+```
+
+### Backend Tests (junto al source, `src/test/java/...`)
+
+```
+{módulo}/
+├── domain/
+│   ├── entities/
+│   │   └── {Entity}Test.java
+│   └── valueobjects/
+│       ├── {Field}ValueTest.java
+│       └── {Type}Test.java
+├── application/
+│   └── usecases/
+│       ├── Register{Entity}UseCaseTest.java
+│       ├── Update{Entity}UseCaseTest.java
+│       └── List{Entity}sUseCaseTest.java
+└── infrastructure/
+    ├── web/
+    │   └── {Entity}ControllerTest.java
+    └── persistence/
+        └── {Entity}RepositoryAdapterTest.java
 ```
 
 ### Frontend
@@ -303,10 +392,40 @@ Módulo encargado de la {gestión/funcionalidad} de {entidad} en Parsun. Permite
 ```
 features/{module}/
 ├── pages/
+│   ├── list/
+│   │   ├── {entity}-list.component.ts
+│   │   └── {entity}-list.component.spec.ts
+│   ├── form/
+│   │   ├── {entity}-form.component.ts
+│   │   └── {entity}-form.component.spec.ts
+│   └── details/
+│       ├── {entity}-details.component.ts
+│       └── {entity}-details.component.spec.ts
 ├── components/
+│   ├── general-section/
+│   │   ├── general-section.component.ts
+│   │   └── general-section.component.spec.ts
+│   ├── contact-section/
+│   │   ├── contact-section.component.ts
+│   │   └── contact-section.component.spec.ts
+│   └── addresses-section/
+│       ├── addresses-section.component.ts
+│       └── addresses-section.component.spec.ts
 ├── services/
+│   ├── api/
+│   │   ├── {entity}-api.service.ts
+│   │   └── {entity}-api.service.spec.ts
+│   └── mappers/
+│       ├── {entity}.mapper.ts
+│       └── {entity}.mapper.spec.ts
+├── validators/
+│   ├── {entity}.validators.ts
+│   └── {entity}.validators.spec.ts
+├── data/
+│   └── {entity-geo}.data.ts
 ├── models/
-└── {module}.routes.ts
+│   └── {entity}.model.ts
+└── {entity}s.routes.ts
 ```
 
 * * *
@@ -329,12 +448,41 @@ features/{module}/
 
 * * *
 
+## Tests
+
+### Backend Tests
+
+| Tipo | Framework | Cobertura esperada |
+|------|-----------|--------------------|
+| Unitarios (Domain + ValueObjects) | JUnit 5 + Mockito | 100% — lógica de dominio y reglas de negocio |
+| Use Cases | JUnit 5 + Mockito | 100% — flujos felices y bordes |
+| Controller (API) | `@WebMvcTest` + MockMvc | ~90% — status codes, validación, serialización |
+| Integración (Repository) | Testcontainers + `@DataJpaTest` | ~80% — queries nativas, proyecciones |
+
+Ejecución: `mvnw test -pl {module}`
+
+### Frontend Tests
+
+| Tipo | Framework | Cobertura esperada |
+|------|-----------|--------------------|
+| Componentes | Vitest + Testing Library | ~80% — render, interacción, estados |
+| Servicios API | Vitest + MSW (Mock Service Worker) | 100% — mapeo de requests/responses |
+| Validators | Vitest | 100% — reglas de validación |
+| Mappers | Vitest | 100% — transformaciones DTO ↔ Model |
+
+Ejecución: `npx vitest run --reporter=verbose`
+
+Los tests `.spec.ts` viven junto al source que prueban (collocation).
+
+* * *
+
 ## Notas de Implementación
 
 - IDs: `BINARY(16)` en MySQL, UUID string en API
 - Arquitectura Hexagonal: dominio sin Spring ni JPA
 - Tests con `BaseIntegrationTest` (Testcontainers) y `BaseWebControllerTest`
-- Frontend: Vitest `.spec.ts` junto al source
+- Seed data versionado con Flyway junto a las migraciones DDL
+- Frontend: Vitest `.spec.ts` junto al source, cobertura mínima 80%
 ```
 
 ---
@@ -389,6 +537,13 @@ CREATE TABLE {table_name} (
 
 * * *
 
+## Migraciones Flyway
+
+| Versión | Archivo | Descripción |
+|---------|---------|-------------|
+| V{N} | `V{N}__{description}.sql` | DDL |
+| V{N}+1 | `V{N+1}__seed_{module}.sql` | Seed data inicial |
+
 ## Reglas de Negocio
 
 1. {Rule 1}
@@ -400,9 +555,76 @@ CREATE TABLE {table_name} (
 
 ## Esquema de Clases (Domain)
 
+### Backend
+
+```
+{módulo}/
+├── domain/
+├── application/
+│   ├── usecases/
+│   ├── dto/
+│   │   ├── request/
+│   │   └── response/
+│   └── mappers/
+└── infrastructure/
+    ├── web/
+    ├── persistence/
+    └── config/
+```
+
+### Backend Tests
+
+```
+{módulo}/
+├── domain/
+│   └── {Entity}Test.java
+├── application/
+│   └── usecases/
+│       └── ...UseCaseTest.java
+└── infrastructure/
+    ├── web/
+    │   └── {Entity}ControllerTest.java
+    └── persistence/
+        └── {Entity}RepositoryAdapterTest.java
+```
+
+### Frontend
+
+```
+features/{module}/
+├── pages/
+│   ├── list/
+│   │   ├── {entity}-list.component.ts
+│   │   └── {entity}-list.component.spec.ts
+│   ├── form/
+│   │   ├── {entity}-form.component.ts
+│   │   └── {entity}-form.component.spec.ts
+│   └── details/
+│       ├── {entity}-details.component.ts
+│       └── {entity}-details.component.spec.ts
+├── components/
+│   ├── ...-section/
+│   │   ├── ...-section.component.ts
+│   │   └── ...-section.component.spec.ts
+├── services/
+│   ├── api/
+│   ├── mappers/
+├── validators/
+├── models/
+└── {entity}s.routes.ts
+```
+
 ## API Endpoints
 
+## Tests
+
+### Backend: JUnit 5 + Mockito + Testcontainers
+### Frontend: Vitest + Testing Library, `.spec.ts` junto al source
+
 ## Casos de Prueba Críticos
+
+1. {Test case 1}
+2. {Test case 2}
 ```
 
 ---
@@ -454,8 +676,19 @@ When asked to create a new module in ClickUp:
 ```
 1. SEARCH for existing task/docs first (pre-flight)
 2. CREATE parent task: Módulo {Name} in correct list
-3. CREATE subtasks organized by layers and phases
-4. ADD dependencies: DB → Backend → Frontend per phase, and between phases
+   - Priority: high | Tags: ["parsun"] | Assignee: Gabriel
+   - Description with summary and design reference
+3. CREATE grouped subtasks (Orders-style):
+   a. 📁 Database Seeder (priority: low)
+      → Create Flyway migrations for {module} tables
+      → Seed {module} with initial data
+   b. 📁 Backend (priority: high)
+      → Use cases, DTOs, mappers, controller
+   c. 📁 Frontend (priority: high)
+      → Routing, service, pages (list/form/detail), components
+   d. 📁 Reports (priority: normal, optional)
+      → PDF templates, download actions
+4. No dependencies needed between groupers (trabajo independiente)
 5. CREATE doc page using the correct template (Parsun or Lexand)
 6. UPDATE the Módulos table of contents if Lexand
 7. ASSIGN all to Gabriel with correct priority
