@@ -323,6 +323,7 @@ fn run(cli: Cli) -> Result<(), (u8, String)> {
                 .with_prompt("Selecciona las configuraciones")
                 .items(&labels)
                 .defaults(&defaults)
+                .max_length(labels.len())
                 .interact()
                 .map_err(|error| (1, error.to_string()))?;
             let selected = choices
