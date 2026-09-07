@@ -23,8 +23,7 @@ pub fn check_parent(path: &Path) -> Result<(), String> {
     {
         match fs::symlink_metadata(ancestor) {
             Ok(metadata)
-                if metadata.file_type().is_symlink()
-                    && !matches!(ancestor, p if p == Path::new("/var") || p == Path::new("/tmp"))
+                if metadata.file_type().is_symlink() && ancestor != Path::new("/var")
                     || !metadata.is_dir() =>
             {
                 return Err(format!(
