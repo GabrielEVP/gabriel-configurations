@@ -1,6 +1,6 @@
-# Desarrollo
+# Development
 
-Toolchain: Rust 1.98.1, fijada en rust-toolchain.toml. El paquete contiene biblioteca y ejecutable; Cargo.lock forma parte del proyecto.
+Toolchain: Rust 1.98.1, pinned in rust-toolchain.toml. The package contains a library and executable; Cargo.lock is part of the project.
 
 Comprobaciones:
 
@@ -10,30 +10,30 @@ cargo clippy --all-targets -- -D warnings
 cargo test
 ```
 
-Cada comportamiento se desarrolla con una prueba roja por funcionalidad ausente, implementación mínima y refactorización en verde. Los errores de entorno o compilador no sustituyen esa evidencia. No añadir comentarios al código propio ni a sus pruebas; explicar decisiones aquí y conservar avisos legales de terceros.
+Each behavior is developed with a failing test for the missing functionality, a minimal implementation, and a green refactor. Environment or compiler errors do not replace that evidence. Do not add comments to project code or tests; explain decisions here and preserve third-party legal notices.
 
-Unidades de revisión previstas: detección del equipo; catálogo y plan; proveedores; aplicación recuperable; actualizaciones; migración por módulo; distribución. Cada unidad conserva pruebas y documentación con su implementación. Se podrán agrupar en PRs encadenadas de alcance revisable cuando se solicite publicar.
+Planned review units: environment detection; catalog and plan; providers; recoverable application; updates; per-module migration; distribution. Each unit keeps its tests and documentation with its implementation. They can be grouped into chained PRs when publication is requested.
 
-## Evidencia TDD
+## TDD evidence
 
-| Incremento | Rojo | Verde | Refactor/verificación |
+| Increment | Red | Green | Refactor/verification |
 |---|---|---|---|
-| Detección de plataforma | cargo test --test platform: 2 fallos por detección ausente | 5 pruebas pasan | cargo fmt y clippy sin advertencias |
+| Platform detection | cargo test --test platform: 2 failures for missing detection | 5 tests pass | cargo fmt and clippy without warnings |
 
-| Rutas de usuario | 5 fallos por resolución ausente | 5 pruebas pasan | Sin creación de directorios; rutas con espacios |
-| Catálogo y grafo | 5 fallos por carga/orden ausentes | 7 pruebas pasan | fmt y clippy; errores de manifiesto localizados |
-| Procesos y Homebrew | 3 fallos por ejecución/consulta ausente | 4 pruebas pasan | Argumentos literales; errores sin credenciales |
+| User paths | 5 failures for missing resolution | 5 tests pass | No directory creation; paths with spaces |
+| Catalog and graph | 5 failures for missing loading/order | 7 tests pass | fmt and clippy; localized manifest errors |
+| Processes and Homebrew | 3 failures for missing execution/query | 4 tests pass | Literal arguments; errors without credentials |
 
-| Planificación | 3 fallos por plan ausente | 4 pruebas pasan | Clasificación y exclusión transitiva |
-| Composición | 3 fallos por composición ausente | 5 pruebas pasan | Plantillas, escapes y enlaces |
-| Estado y actualización | 6 fallos por aplicación ausente | 8 pruebas pasan tras corregir adopción idéntica | Respaldos, bloqueo y recuperación de diario |
+| Planning | 3 failures for missing plan | 4 tests pass | Classification and transitive exclusion |
+| Composition | 3 failures for missing composition | 5 tests pass | Templates, escaping, and links |
+| State and updates | 6 failures for missing application | 8 tests pass after fixing identical adoption | Backups, locking, and journal recovery |
 
-| CLI inicial | 3 fallos por ayuda/selección/plan ausentes | 3 pruebas pasan | dry-run sin HOME ni estado creados |
+| Initial CLI | 3 failures for missing help/selection/plan | 3 tests pass | dry-run without creating HOME or state |
 
-## Aprendizaje
+## Learning notes
 
-Platform agrupa valores relacionados en una struct. OperatingSystem y Architecture son enums: impiden representar sistemas no admitidos como estados válidos. Result devuelve una plataforma válida o un error; los tests ejercitan ambas rutas sin consultar ni modificar el equipo.
+Platform groups related values in a struct. OperatingSystem and Architecture are enums, preventing unsupported systems from becoming valid states. Result returns a valid platform or an error; tests exercise both paths without querying or modifying the host.
 
 ## Integración continua
 
-El usuario ha elegido GitHub Actions para verificar Ubuntu y macOS. .github/workflows/ci.yml ejecuta fmt, clippy y tests en ubuntu-24.04 y macos-15; las instalaciones y pruebas gráficas reales necesitan jobs de aceptación separados. La existencia del workflow no demuestra una ejecución remota correcta.
+GitHub Actions verifies Ubuntu and macOS. .github/workflows/ci.yml runs fmt, clippy, and tests on ubuntu-24.04 and macos-15; real installations and graphical tests require separate acceptance jobs. The workflow file alone does not prove a successful remote run.

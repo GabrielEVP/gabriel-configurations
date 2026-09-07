@@ -1,3 +1,3 @@
-# Catálogo de módulos
+# Module catalog
 
-Cada herramienta se añade como una carpeta con `module.toml`, `common/` y opcionalmente `ubuntu/` y `macos/`. El CLI valida el catálogo antes de ejecutar cualquier acción.
+Each tool is added as a folder with `module.toml`, `common/`, and optionally `ubuntu/` and `macos/`. The CLI validates the catalog before executing any action.
