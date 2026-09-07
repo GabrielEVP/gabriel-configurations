@@ -1,4 +1,5 @@
 use clap::{Parser, Subcommand};
+use dialoguer::MultiSelect;
 use gabriel::{
     catalog::Catalog,
     config::compose,
@@ -312,18 +313,22 @@ fn run(cli: Cli) -> Result<(), (u8, String)> {
             (profile.modules, false)
         }
         Commands::Setup { .. } => {
-            for module in catalog.modules.values() {
-                println!("{}: {}", module.id, module.description);
-            }
-            print!("Modules (space separated): ");
-            io::stdout()
-                .flush()
+            let modules = catalog.modules.values().collect::<Vec<_>>();
+            let labels = modules
+                .iter()
+                .map(|module| format!("{} - {}", module.id, module.description))
+                .collect::<Vec<_>>();
+            let defaults = vec![true; labels.len()];
+            let choices = MultiSelect::new()
+                .with_prompt("Selecciona las configuraciones")
+                .items(&labels)
+                .defaults(&defaults)
+                .interact()
                 .map_err(|error| (1, error.to_string()))?;
-            let mut selection = String::new();
-            io::stdin()
-                .read_line(&mut selection)
-                .map_err(|error| (1, error.to_string()))?;
-            let selected: Vec<String> = selection.split_whitespace().map(str::to_owned).collect();
+            let selected = choices
+                .into_iter()
+                .map(|index| modules[index].id.clone())
+                .collect::<Vec<_>>();
             if selected.is_empty() {
                 return Err((2, "no modules selected".into()));
             }
