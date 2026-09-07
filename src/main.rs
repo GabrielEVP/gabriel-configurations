@@ -320,7 +320,7 @@ fn run(cli: Cli) -> Result<(), (u8, String)> {
                 .collect::<Vec<_>>();
             let defaults = vec![true; labels.len()];
             let choices = MultiSelect::new()
-                .with_prompt("Selecciona las configuraciones")
+                .with_prompt("Select configurations")
                 .items(&labels)
                 .defaults(&defaults)
                 .max_length(8)
