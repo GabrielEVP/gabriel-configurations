@@ -23,8 +23,8 @@ pub fn check_parent(path: &Path) -> Result<(), String> {
     {
         match fs::symlink_metadata(ancestor) {
             Ok(metadata)
-                if metadata.file_type().is_symlink() && ancestor != Path::new("/var")
-                    || !metadata.is_dir() =>
+                if (metadata.file_type().is_symlink() && ancestor != Path::new("/var"))
+                    || (!metadata.file_type().is_symlink() && !metadata.is_dir()) =>
             {
                 return Err(format!(
                     "unsafe destination ancestor: {}",
