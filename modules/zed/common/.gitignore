@@ -1,0 +1,11 @@
+# Zed internal databases (auto-generated)
+prompts/
+conversations/
+
+# Binary files
+*.jpg
+*.png
+*.ico
+
+# Backups
+settings_backup.json

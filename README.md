@@ -44,6 +44,24 @@ chmod +x install.sh
 
 > **Note:** Existing config directories are backed up automatically before installation.
 
+## Rust CLI (in development)
+
+The new `gabriel` CLI supports Ubuntu and macOS, discovers modules from `modules/`, adapts configuration paths per platform, and preserves local edits with recoverable state.
+
+```bash
+cargo run -- setup --all --dry-run
+cargo run -- install tmux --dry-run
+cargo run -- status
+cargo run -- doctor
+cargo run -- config update --yes
+cargo run -- config resolve nvim --file init.lua --use incoming --yes
+cargo run -- upgrade nvim --yes
+```
+
+Add a tool by creating `modules/<id>/module.toml` and its `common/`, `ubuntu/`, and `macos/` files. Use `--source <checkout>` to test another catalog. Package installation requires explicit `--yes`; configuration-only modules can be applied after previewing the plan.
+
+GitHub Actions verifies formatting, Clippy, and the full test suite on Ubuntu 24.04 and macOS 15.
+
 ## Post-Install: Add Your Tokens
 
 After installation, edit `~/.config/opencode/opencode.json` and add your API tokens:
@@ -64,7 +82,7 @@ After installation, edit `~/.config/opencode/opencode.json` and add your API tok
 - **zellij** — [zellij.dev](https://zellij.dev) (optional)
 - **tmux** — [github.com/tmux/tmux](https://github.com/tmux/tmux) (optional)
 - **IosevkaTerm NF** font — [nerdfonts.com](https://www.nerdfonts.com/font-downloads)
-- `git`, `rsync` (for the install script)
+- `curl` and `sha256sum` or `shasum` (for the bootstrap script)
 
 ## Neovim
 

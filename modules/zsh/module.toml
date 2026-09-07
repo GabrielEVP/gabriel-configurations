@@ -1,0 +1,35 @@
+schema_version = 1
+id = "zsh"
+description = "Z shell configuration"
+dependencies = []
+[platforms.ubuntu]
+minimum_os = "24.04"
+architectures = ["x86_64", "aarch64"]
+
+[platforms.ubuntu.provider]
+kind = "apt"
+package = "zsh"
+[platforms.macos]
+minimum_os = "14"
+architectures = ["x86_64", "aarch64"]
+
+[platforms.macos.provider]
+kind = "brew"
+package = "zsh"
+
+[detect]
+program = "zsh"
+args = ["--version"]
+minimum_version = "5.8"
+[[files]]
+source = "zshrc"
+base = "home"
+target = ".zshrc"
+[[files]]
+source = "zprofile"
+base = "home"
+target = ".zprofile"
+[[files]]
+source = "zshenv"
+base = "home"
+target = ".zshenv"

@@ -1,0 +1,30 @@
+schema_version = 1
+id = "tmux"
+description = "Terminal multiplexer configuration"
+dependencies = []
+
+[platforms.ubuntu]
+minimum_os = "24.04"
+architectures = ["x86_64", "aarch64"]
+
+[platforms.ubuntu.provider]
+kind = "apt"
+package = "tmux"
+
+[platforms.macos]
+minimum_os = "14"
+architectures = ["x86_64", "aarch64"]
+
+[platforms.macos.provider]
+kind = "brew"
+package = "tmux"
+
+[detect]
+program = "tmux"
+args = ["-V"]
+minimum_version = "3.2"
+
+[[files]]
+source = "tmux.conf"
+base = "home"
+target = ".tmux.conf"

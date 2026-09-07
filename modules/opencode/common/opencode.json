@@ -1,0 +1,128 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "autoupdate": true,
+  "provider": {
+    "opencode-go": {
+      "models": {
+        "opencode-go/deepseek-v4-pro": {
+          "name": "DeepSeek V4 Pro"
+        }
+      }
+    }
+  },
+  "lsp": {
+    "angular": {
+      "command": [
+        "/home/gabriel/.local/share/nvim/mason/bin/ngserver",
+        "--stdio",
+        "--tsProbeLocations",
+        "/home/gabriel/.local/share/nvim/mason/packages/angular-language-server/node_modules/typescript/lib",
+        "--ngProbeLocations",
+        "/home/gabriel/.local/share/nvim/mason/packages/angular-language-server/node_modules/@angular/language-service"
+      ],
+      "extensions": [".ts"]
+    }
+  },
+  "mcp": {
+    "clickup": {
+      "command": ["npx", "-y", "mcp-remote", "https://mcp.clickup.com/mcp"],
+      "enabled": true,
+      "type": "local"
+    },
+    "context7": {
+      "enabled": true,
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp"
+    },
+    "docker": {
+      "command": ["docker-mcp-server"],
+      "enabled": true,
+      "type": "local"
+    },
+    "engram": {
+      "command": ["engram", "mcp", "--tools=agent"],
+      "type": "local"
+    },
+    "figma": {
+      "command": ["figma-developer-mcp", "--stdio", "--figma-api-key", "figd_GThQnwzsssiRQ2GXxw4z1y2bbnZR03il-lvQ-JcT", "--no-telemetry"],
+      "enabled": true,
+      "type": "local"
+    },
+    "gh_grep": {
+      "enabled": true,
+      "type": "remote",
+      "url": "https://mcp.grep.app"
+    },
+    "github": {
+      "command": [
+        "docker",
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "ghcr.io/github/github-mcp-server"
+      ],
+      "enabled": true,
+      "environment": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "YOUR_GITHUB_TOKEN"
+      },
+      "type": "local"
+    },
+    "gitlab": {
+      "command": ["npx", "-y", "@structured-world/gitlab-mcp"],
+      "enabled": true,
+      "environment": {
+        "GITLAB_API_URL": "https://gitlab.com",
+        "GITLAB_TOKEN": "YOUR_GITLAB_TOKEN"
+      },
+      "type": "local"
+    },
+    "notion": {
+      "command": ["npx", "-y", "@notionhq/notion-mcp-server"],
+      "enabled": true,
+      "environment": {
+        "OPENAPI_MCP_HEADERS": "{\"Authorization\": \"Bearer YOUR_NOTION_TOKEN\", \"Notion-Version\": \"2022-06-28\"}"
+      },
+      "type": "local"
+    },
+    "playwright": {
+      "command": ["npx", "-y", "@playwright/mcp@latest"],
+      "enabled": true,
+      "environment": {},
+      "type": "local"
+    },
+    "primeng": {
+      "command": ["node", "/home/gabriel/.local/share/primeng-mcp/node_modules/.bin/primeng-mcp"],
+      "enabled": true,
+      "type": "local"
+    }
+  },
+  "permission": {
+    "bash": {
+      "*": "allow",
+      "git commit *": "ask",
+      "git push": "ask",
+      "git push *": "ask",
+      "git push --force *": "ask",
+      "git rebase *": "ask",
+      "git reset --hard *": "ask"
+    },
+    "edit": {
+      "*": "ask"
+    },
+    "write": {
+      "*": "ask"
+    },
+    "read": {
+      "*": "allow",
+      "**/.env": "deny",
+      "**/.env.*": "deny",
+      "**/credentials.json": "deny",
+      "**/secrets/**": "deny",
+      "*.env": "deny",
+      "*.env.*": "deny"
+    }
+  },
+  "plugin": ["@superwhisper/opencode"]
+}

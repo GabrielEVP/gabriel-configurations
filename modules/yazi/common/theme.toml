@@ -1,0 +1,32 @@
+[flavor]
+dark = "onedark"
+
+[filetype]
+rules = [
+    # Images
+    { mime = "image/*", fg = "#E5C07B" },
+
+    # Media
+    { mime = "video/*", fg = "#E06C75" },
+    { mime = "audio/*", fg = "#E06C75" },
+
+    # Archives
+    { mime = "application/zip", fg = "#C678DD" },
+    { mime = "application/x-tar", fg = "#C678DD" },
+    { mime = "application/x-bzip*", fg = "#C678DD" },
+    { mime = "application/x-bzip2", fg = "#C678DD" },
+    { mime = "application/x-7z-compressed", fg = "#C678DD" },
+    { mime = "application/x-rar", fg = "#C678DD" },
+    { mime = "application/x-xz", fg = "#C678DD" },
+
+    # Documents
+    { mime = "application/doc", fg = "#98C379" },
+    { mime = "application/pdf", fg = "#98C379" },
+    { mime = "application/rtf", fg = "#98C379" },
+    { mime = "application/vnd.*", fg = "#98C379" },
+
+    # Fallback: todos los archivos
+    { url = "*", fg = "#ABB2BF" },
+    # Fallback: todos los directorios (BLANCO, no azul)
+    { url = "*/", fg = "white" },
+]

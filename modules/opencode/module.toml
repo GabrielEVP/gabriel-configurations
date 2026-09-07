@@ -1,0 +1,24 @@
+schema_version = 1
+id = "opencode"
+description = "OpenCode configuration"
+dependencies = []
+[platforms.ubuntu]
+minimum_os = "24.04"
+architectures = ["x86_64", "aarch64"]
+[platforms.macos]
+minimum_os = "14"
+architectures = ["x86_64", "aarch64"]
+[[files]]
+source = "opencode.json"
+base = "config"
+target = "opencode/opencode.json"
+local_only = true
+[[files]]
+source = "config.json"
+base = "config"
+target = "opencode/config.json"
+local_only = true
+[[files]]
+source = "tui.json"
+base = "config"
+target = "opencode/tui.json"

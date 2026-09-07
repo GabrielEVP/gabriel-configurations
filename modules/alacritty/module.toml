@@ -1,0 +1,14 @@
+schema_version = 1
+id = "alacritty"
+description = "Alacritty terminal configuration"
+dependencies = []
+[platforms.ubuntu]
+minimum_os = "24.04"
+architectures = ["x86_64", "aarch64"]
+[platforms.macos]
+minimum_os = "14"
+architectures = ["x86_64", "aarch64"]
+[[files]]
+source = "alacritty.toml"
+base = "config"
+target = "alacritty/alacritty.toml"

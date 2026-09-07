@@ -1,0 +1,14 @@
+schema_version = 1
+id = "kitty"
+description = "Kitty terminal configuration"
+dependencies = []
+[platforms.ubuntu]
+minimum_os = "24.04"
+architectures = ["x86_64", "aarch64"]
+[platforms.macos]
+minimum_os = "14"
+architectures = ["x86_64", "aarch64"]
+[[files]]
+source = "kitty.conf"
+base = "config"
+target = "kitty/kitty.conf"

@@ -1,0 +1,30 @@
+schema_version = 1
+id = "nvim"
+description = "Neovim editor configuration"
+dependencies = ["tmux"]
+
+[platforms.ubuntu]
+minimum_os = "24.04"
+architectures = ["x86_64", "aarch64"]
+
+[platforms.ubuntu.provider]
+kind = "apt"
+package = "neovim"
+
+[platforms.macos]
+minimum_os = "14"
+architectures = ["x86_64", "aarch64"]
+
+[platforms.macos.provider]
+kind = "brew"
+package = "neovim"
+
+[detect]
+program = "nvim"
+args = ["--version"]
+minimum_version = "0.11"
+
+[[files]]
+source = "init.lua"
+base = "config"
+target = "nvim/init.lua"

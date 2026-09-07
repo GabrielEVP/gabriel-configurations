@@ -1,0 +1,194 @@
+# =============================================================================
+# ~/.zshrc — Gabriel's Zsh Configuration (Ubuntu)
+# Managed via gabriel-configurations repo
+# =============================================================================
+
+# ---- Brew Zsh Functions Path ----
+fpath+=("/home/linuxbrew/.linuxbrew/share/zsh/functions")
+
+# ---- Oh My Zsh ----
+export ZSH="$HOME/.oh-my-zsh"
+
+# ---- PATH ----
+export PATH="$HOME/.local/bin:$HOME/.opencode/bin:$HOME/.cargo/bin:$HOME/.bun/bin:$PATH"
+
+# ---- LS_COLORS (solarized-inspired) ----
+export LS_COLORS="di=38;5;67:ow=48;5;60:ex=38;5;132:ln=38;5;144:*.tar=38;5;180:*.zip=38;5;180:*.jpg=38;5;175:*.png=38;5;175:*.mp3=38;5;175:*.wav=38;5;175:*.txt=38;5;223:*.sh=38;5;132"
+
+# ---- Aliases (early, before plugins) ----
+alias ls='ls --color=auto'
+alias ll='ls -lah'
+alias la='ls -A'
+alias l='ls -CF'
+alias grep='grep --color=auto'
+alias dc='docker compose'
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit'
+alias gp='git push'
+alias gl='git log --oneline --graph'
+alias gd='git diff'
+alias fzfbat='fzf --preview="bat --theme=gruvbox-dark --color=always {}"'
+alias fzfnvim='nvim $(fzf --preview="bat --theme=gruvbox-dark --color=always {}")'
+alias y='yazi'
+alias c='opencode'
+
+# ---- Homebrew (Linuxbrew) ----
+# Needed in .zshrc (not just .zprofile) because tmux starts non-login shells
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+# ---- Project Paths ----
+export PROJECT_PATHS="$HOME/Documents/work"
+
+# ---- FZF ----
+export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
+export FZF_DEFAULT_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
+eval "$(fzf --zsh)"
+
+# ---- Zoxide (smart cd) ----
+eval "$(zoxide init zsh)"
+
+# ---- Atuin (shell history) ----
+eval "$(atuin init zsh)"
+
+# ---- Carapace (bridge completions) ----
+export CARAPACE_BRIDGES='zsh,fish,bash,inshellisense'
+zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
+source <(carapace _carapace)
+
+# ---- Oh My Zsh Plugins ----
+plugins=(
+  command-not-found
+  git
+  docker
+  npm
+  node
+)
+
+# ---- Oh My Zsh Theme ----
+ZSH_THEME="robbyrussell"
+
+# ---- Source Oh My Zsh ----
+source $ZSH/oh-my-zsh.sh
+
+# ---- Zsh Syntax Highlighting (AFTER oh-my-zsh) ----
+source /home/linuxbrew/.linuxbrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# ---- Zsh Autosuggestions (AFTER oh-my-zsh) ----
+source /home/linuxbrew/.linuxbrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# ---- Tmux Auto-Start ----
+# Al abrir la terminal por primera vez, reemplaza el shell con tmux.
+# Cuando ya estás dentro de tmux, $TMUX está definida y no vuelve a entrar.
+if [[ $- == *i* ]] && [[ -z "$TMUX" ]] && [[ -t 1 ]] && command -v tmux &>/dev/null; then
+  exec tmux new-session -A
+fi
+
+# ---- Tmux Project Sessions ----
+# Uso: tmux parsun  → crea o adjunta la sesión con el workspace de Parsun
+# Uso: tmux <otro>  → funciona como tmux normal
+function tmux() {
+  if [[ "$1" == "parsun" ]]; then
+    local session="parsun"
+    local root="${PROJECT_PATHS}/parsun"
+    local app_dir="$root/parsun-app"
+    local api_dir="$root/parsun-api"
+
+    # Si la sesión ya existe, solo cambiarse a ella
+    if command tmux has-session -t "$session" 2>/dev/null; then
+      if [[ -n "$TMUX" ]]; then
+        command tmux switch-client -t "$session"
+      else
+        command tmux attach-session -t "$session"
+      fi
+      return
+    fi
+
+    # Verificar que los directorios existan
+    if [[ ! -d "$root" ]]; then
+      echo "❌ No existe el directorio: $root"
+      echo "   Créalo con: mkdir -p $app_dir $api_dir"
+      return 1
+    fi
+
+    # Guardar TMUX y desactivarlo para crear la sesión desde dentro de tmux
+    local saved_tmux="$TMUX"
+    unset TMUX
+
+    # Desactivar destroy-unattached temporalmente para que la sesión
+    # no se mate al crearla en modo detached
+    command tmux set -g destroy-unattached off 2>/dev/null
+
+    # Window 1: opencode
+    command tmux new-session -d -s "$session" -c "$root" -n "opencode"
+    command tmux send-keys -t "$session:1" "opencode" Enter
+
+    # Window 2: docker compose (split vertical)
+    command tmux new-window -t "$session" -c "$app_dir" -n "docker"
+    command tmux split-window -h -t "$session:2" -c "$api_dir"
+    command tmux send-keys -t "$session:2.1" "docker compose up" Enter
+    command tmux send-keys -t "$session:2.2" "docker compose up" Enter
+
+    # Window 3: lazygit para ambos (split vertical)
+    command tmux new-window -t "$session" -c "$app_dir" -n "lazygit"
+    command tmux split-window -h -t "$session:3" -c "$api_dir"
+    command tmux send-keys -t "$session:3.1" "lazygit" Enter
+    command tmux send-keys -t "$session:3.2" "lazygit" Enter
+
+    # Window 4: nvim
+    command tmux new-window -t "$session" -c "$root" -n "nvim"
+    command tmux send-keys -t "$session:4" "nvim" Enter
+
+    # Restaurar TMUX (aún sin destroy-unattached, para que no mate la sesión)
+    export TMUX="$saved_tmux"
+
+    # Seleccionar y cambiar a la sesión primero (así ya no está unattached)
+    command tmux select-window -t "$session:1"
+    if [[ -n "$saved_tmux" ]]; then
+      command tmux switch-client -t "$session"
+    else
+      command tmux attach-session -t "$session"
+    fi
+
+    # Ahora sí, reactivar destroy-unattached — la sesión ya tiene cliente
+    command tmux set -g destroy-unattached on 2>/dev/null
+
+  else
+    command tmux "$@"
+  fi
+}
+
+# ---- Bun Completions ----
+[[ -s "$HOME/.bun/_bun" ]] && source "$HOME/.bun/_bun"
+
+# ---- NVM (Node Version Manager) ----
+export NVM_DIR="$HOME/.nvm"
+[[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
+
+# ---- PNPM ----
+export PNPM_HOME="$HOME/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+
+# ---- History ----
+HISTSIZE=10000
+SAVEHIST=10000
+HISTFILE="$HOME/.zsh_history"
+setopt SHARE_HISTORY
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_REDUCE_BLANKS
+
+# ---- Key Bindings (emacs mode) ----
+bindkey -e
+
+# ---- Editor ----
+export EDITOR=nvim
+export VISUAL=nvim
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
