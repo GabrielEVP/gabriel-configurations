@@ -178,6 +178,32 @@ fn resolves_conflict_with_local_or_incoming_choice() {
 }
 
 #[test]
+fn automatic_policy_replaces_selected_conflicts_atomically() {
+    let root = tempfile::tempdir().unwrap();
+    let destination = root.path().join("config");
+    let mut store = Store::open(&root.path().join("state")).unwrap();
+    let files = [DesiredFile {
+        path: destination.clone(),
+        content: b"base".to_vec(),
+        local_only: false,
+    }];
+    store.apply("test", &files).unwrap();
+    fs::write(&destination, "local").unwrap();
+    let incoming = [DesiredFile {
+        path: destination.clone(),
+        content: b"incoming".to_vec(),
+        local_only: false,
+    }];
+    let transaction = store
+        .apply_with_policy("test", &incoming, true)
+        .unwrap()
+        .unwrap();
+    assert_eq!(fs::read(&destination).unwrap(), b"incoming");
+    store.restore(&transaction).unwrap();
+    assert_eq!(fs::read(destination).unwrap(), b"local");
+}
+
+#[test]
 fn recovers_uncommitted_writes_before_accepting_another_operation() {
     let root = tempfile::tempdir().unwrap();
     let destination = root.path().join("config");

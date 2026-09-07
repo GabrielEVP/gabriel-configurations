@@ -53,7 +53,7 @@ fn noninteractive_setup_requires_selection() {
 }
 
 #[test]
-fn installs_configuration_only_module_and_preserves_local_edits_on_second_setup() {
+fn installs_configuration_only_module_and_applies_selected_defaults_on_second_setup() {
     let root = tempfile::tempdir().unwrap();
     let module = root.path().join("modules/example");
     fs::create_dir_all(module.join("common")).unwrap();
@@ -79,5 +79,5 @@ fn installs_configuration_only_module_and_preserves_local_edits_on_second_setup(
     let destination = home.join(".config/example/config");
     fs::write(&destination, "local").unwrap();
     assert!(run().status.success());
-    assert_eq!(fs::read(destination).unwrap(), b"local");
+    assert_eq!(fs::read(destination).unwrap(), b"preference");
 }

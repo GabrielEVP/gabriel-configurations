@@ -150,6 +150,15 @@ impl Store {
     }
 
     pub fn apply(&mut self, module: &str, files: &[DesiredFile]) -> Result<Option<String>, String> {
+        self.apply_with_policy(module, files, false)
+    }
+
+    pub fn apply_with_policy(
+        &mut self,
+        module: &str,
+        files: &[DesiredFile],
+        overwrite_conflicts: bool,
+    ) -> Result<Option<String>, String> {
         let baseline = self.state.modules.get(module).cloned();
         let mut after = BTreeMap::new();
         let mut changes = Vec::new();
@@ -177,14 +186,16 @@ impl Store {
                     Some(&file.content),
                 )
             };
-            if decision == Decision::Conflict {
+            if decision == Decision::Conflict && !overwrite_conflicts {
                 return Err(format!(
                     "configuration conflict: {module}: {}",
                     file.path.display()
                 ));
             }
             after.insert(file.path.clone(), file.content.clone());
-            if decision == Decision::Incoming && current.bytes() != Some(&file.content) {
+            if (decision == Decision::Incoming || overwrite_conflicts)
+                && current.bytes() != Some(&file.content)
+            {
                 let mode = match &current {
                     Snapshot::File { mode, .. } => *mode,
                     _ => 0o600,
@@ -205,7 +216,9 @@ impl Store {
                     continue;
                 }
                 let current = Snapshot::read(path)?;
-                if decide(Some(content), current.bytes(), None) == Decision::Conflict {
+                if decide(Some(content), current.bytes(), None) == Decision::Conflict
+                    && !overwrite_conflicts
+                {
                     return Err(format!(
                         "configuration conflict on removed file: {}",
                         path.display()

@@ -472,7 +472,9 @@ fn run(cli: Cli) -> Result<(), (u8, String)> {
     }
     let mut store = Store::open(&paths.state).map_err(|error| (1, error))?;
     for (module, files) in configurations {
-        let transaction = store.apply(&module, &files).map_err(|error| (1, error))?;
+        let transaction = store
+            .apply_with_policy(&module, &files, true)
+            .map_err(|error| (1, error))?;
         println!(
             "{module}: {}",
             transaction.as_deref().unwrap_or("unchanged")
