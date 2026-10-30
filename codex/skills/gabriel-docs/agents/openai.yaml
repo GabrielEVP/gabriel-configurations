@@ -1,0 +1,4 @@
+interface:
+  display_name: "Gabriel Docs"
+  short_description: "Technical documentation specialist"
+  default_prompt: "Use $gabriel-docs to document this verified implementation."

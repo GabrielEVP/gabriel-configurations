@@ -1,11 +1,12 @@
 # gabriel-configurations
 
-Personal dotfiles for ghostty, neovim, opencode, zed, zsh, zellij, and tmux.
+Personal dotfiles for Codex, ghostty, neovim, opencode, zed, zsh, zellij, and tmux.
 
 ## Contents
 
 ```
 gabriel-configurations/
+├── codex/              # Codex settings, personal skills and execution rules
 ├── ghostty/
 │   ├── config          # Terminal configuration (font, colors, keybindings)
 │   └── themes/         # Ghostty theme presets
@@ -26,6 +27,10 @@ gabriel-configurations/
 ├── zsh/                # Zsh config (.zshrc, .zprofile, .zshenv)
 └── install.sh          # Cross-platform automated installation (macOS + Linux)
 ```
+
+## Codex
+
+See [codex/README.md](codex/README.md) for the configuration backup and manual restore instructions.
 
 ## Quick Install
 

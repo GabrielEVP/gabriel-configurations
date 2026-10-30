@@ -1,0 +1,4 @@
+interface:
+  display_name: "Gabriel Optimizer"
+  short_description: "Performance optimization specialist"
+  default_prompt: "Use $gabriel-optimizer to analyze this performance concern."

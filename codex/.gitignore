@@ -1,0 +1,13 @@
+auth.json
+*.sqlite*
+*.jsonl
+.codex-global-state*
+cache/
+plugins/cache/
+sessions/
+logs/
+tmp/
+.tmp/
+.DS_Store
+__pycache__/
+*.pyc

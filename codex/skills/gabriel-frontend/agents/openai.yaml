@@ -1,0 +1,4 @@
+interface:
+  display_name: "Gabriel Frontend"
+  short_description: "Angular and UI specialist"
+  default_prompt: "Use $gabriel-frontend to implement this frontend change."

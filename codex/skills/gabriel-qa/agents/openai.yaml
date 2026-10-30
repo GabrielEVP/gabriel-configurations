@@ -1,0 +1,4 @@
+interface:
+  display_name: "Gabriel QA"
+  short_description: "Testing and verification specialist"
+  default_prompt: "Use $gabriel-qa to verify this implementation."

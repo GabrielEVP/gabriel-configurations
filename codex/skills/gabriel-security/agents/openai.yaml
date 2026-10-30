@@ -1,0 +1,4 @@
+interface:
+  display_name: "Gabriel Security"
+  short_description: "Security review specialist"
+  default_prompt: "Use $gabriel-security to review this change for security issues."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Gabriel Backend"
+  short_description: "Spring and Java backend specialist"
+  default_prompt: "Use $gabriel-backend to implement this backend change."
