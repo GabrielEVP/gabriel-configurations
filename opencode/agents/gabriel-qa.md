@@ -1,13 +1,17 @@
 ---
 description: QA testing specialist — Test-driven development, test writing, coverage analysis, assertion-based testing, integration testing, e2e testing, test refactoring. Invoked for all testing tasks.
 mode: subagent
-model: opencode-go/deepseek-v4-flash
-temperature: 0.2
-permission:
-  edit: allow
-  bash: allow
-  task:
-    "*": allow
+model: opencode-go/deepseek-v4.1-flash
+permissions:
+  - action: edit
+    resource: "*"
+    effect: allow
+  - action: shell
+    resource: "*"
+    effect: allow
+  - action: subagent
+    resource: "*"
+    effect: allow
 ---
 
 # Gabriel QA Specialist

@@ -1,13 +1,17 @@
 ---
 description: Documentation specialist — Technical docs, API docs, architecture diagrams, module documentation. Always verifies implementation before documenting.
 mode: subagent
-model: opencode-go/deepseek-v4-flash
-temperature: 0.3
-permission:
-  edit: allow
-  bash: deny
-  task:
-    "*": allow
+model: opencode-go/deepseek-v4.1-flash
+permissions:
+  - action: edit
+    resource: "*"
+    effect: allow
+  - action: shell
+    resource: "*"
+    effect: deny
+  - action: subagent
+    resource: "*"
+    effect: allow
 ---
 
 # Gabriel Documentation Specialist

@@ -1,11 +1,15 @@
 ---
 description: Gabriel — General-purpose assistant for everyday tasks. Terminal configuration, PC setup, troubleshooting, system administration, general questions, code review, and quick fixes. NOT for SDD-driven feature development — use gabriel-orchestrator for that.
-mode: primary
+mode: primary
+model: opencode-go/deepseek-v4.1-flash
 color: info
-temperature: 0.5
-permission:
-  edit: allow
-  bash: allow
+permissions:
+  - action: edit
+    resource: "*"
+    effect: allow
+  - action: shell
+    resource: "*"
+    effect: allow
 ---
 
 # Gabriel

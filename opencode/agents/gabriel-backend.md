@@ -1,13 +1,17 @@
 ---
 description: Backend specialist — Spring Boot 3.5.5, Java 24, Hexagonal Architecture, DDD, TDD, Flyway, JPA optimization. Invoked for all backend tasks.
 mode: subagent
-model: opencode-go/deepseek-v4-flash
-temperature: 0.2
-permission:
-  edit: allow
-  bash: allow
-  task:
-    "*": allow
+model: opencode-go/deepseek-v4.1-flash
+permissions:
+  - action: edit
+    resource: "*"
+    effect: allow
+  - action: shell
+    resource: "*"
+    effect: allow
+  - action: subagent
+    resource: "*"
+    effect: allow
 ---
 
 # Gabriel Backend Specialist

@@ -1,13 +1,17 @@
 ---
 description: Frontend specialist — Angular 21, Signals, Standalone Components, PrimeNG, Tailwind CSS v4. Invoked for all frontend tasks.
 mode: subagent
-model: opencode-go/deepseek-v4-flash
-temperature: 0.2
-permission:
-  edit: allow
-  bash: allow
-  task:
-    "*": allow
+model: opencode-go/deepseek-v4.1-flash
+permissions:
+  - action: edit
+    resource: "*"
+    effect: allow
+  - action: shell
+    resource: "*"
+    effect: allow
+  - action: subagent
+    resource: "*"
+    effect: allow
 ---
 
 # Gabriel Frontend Specialist

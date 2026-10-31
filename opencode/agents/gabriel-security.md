@@ -1,13 +1,17 @@
 ---
 description: Security specialist — JWT, Spring Security, BCrypt, RBAC, Angular Guards, httpOnly cookies, CORS. Invoked for all security tasks.
 mode: subagent
-model: opencode-go/deepseek-v4-pro
-temperature: 0.1
-permission:
-  edit: allow
-  bash: allow
-  task:
-    "*": allow
+model: opencode-go/deepseek-v4.1-flash
+permissions:
+  - action: edit
+    resource: "*"
+    effect: allow
+  - action: shell
+    resource: "*"
+    effect: allow
+  - action: subagent
+    resource: "*"
+    effect: allow
 ---
 
 # Gabriel Security Specialist
