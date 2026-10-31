@@ -103,3 +103,7 @@ Based on [LazyVim](https://www.lazyvim.org/) with:
 ## License
 
 MIT
+
+## Herdr
+
+See [herdr/README.md](herdr/README.md) for the layout, custom mods and keybindings backup.
